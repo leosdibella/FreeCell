@@ -211,6 +211,11 @@
             }
             
             fillCascadeElements(game);
+        },
+        toggleButtonDisabled = function dom_toggleButtonDisabled(buttonElement, isDisabled) {
+            if (buttonElement) {
+                buttonElement.disabled = !!isDisabled;
+            }
         };
         
     
@@ -231,7 +236,13 @@
                 redrawPlayingFieldElements(game);
             }
         },
-        updateCascadeElement: function freeCell_updateCascadeElement(index, startingIndex, cascadeCardsInPlay) {
+        toggleRedoButtonDisabled: function dom_toggleRedoButtonDisabled(isDisabled) {
+            toggleButtonDisabled(menuElements.redoButton, isDisabled);
+        },
+        toggleUndoButtonDisabled: function dom_toggleRedoButtonDisabled(isDisabled) {
+            toggleButtonDisabled(menuElements.undoButton, isDisabled);
+        },
+        updateCascadeElement: function dom_updateCascadeElement(index, startingIndex, cascadeCardsInPlay) {
             var i,
                 cascadeElement = playingFieldElements.cascades.children[index],
                 startingCardInPlay = cascadeCardsInPlay[startingIndex],

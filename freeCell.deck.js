@@ -137,7 +137,8 @@
     }
     
     window.freeCell.Deck = Deck;
-    window.freeCell.defaults.deck = new Deck();
+    window.freeCell.current.deck = new Deck();
+    window.freeCell.defaults.deck = window.freeCell.current.deck;
     window.freeCell.defaults.numberOfCardsPerSuit = defaultNumberOfCardsPerSuit;
     window.freeCell.defaults.faceCardValues = defaultFaceCardValues;
 }());
