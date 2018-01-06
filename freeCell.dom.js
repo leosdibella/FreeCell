@@ -3,158 +3,52 @@
 (function () {
     'use strict';
     
-    function Dom() {
-        var dom = this,
-            cascadeCardSpacingPixels = 215,
-            attributeSplitter = '-',
-            cardElementChildIndices = {
-                topLeftCorner: 0,
-                middle: 1,
-                bottomRightCorner: 2
-            },
-            alignClasses = {
-                left: 'align-left',
-                right: 'align-right'
-            },
-            generateColorStyleString = function dom_generateColorStyleString(rgbColor, alpha) {
-                var alphaValue = alpha ? Math.max(Math.abs(alpha), 1) : 0;
-                
-                return 'rgb' + (alphaValue > 0 ? 'a' : '') + '(' + rgbColor.red + ',' + rgbColor.green + ',' + rgbColor.blue + (alphaValue > 0 ? ',' + alphaValue : '') + ')';
-            },
-            generateBorderStyleString = function dom_generateBorderStyleString(rgbColor) {
-                return '1px solid ' + generateColorStyleString(rgbColor);
-            },
-            generateBoxShadowStyleString = function dom_generateBoxShadowStyleString(rgbColor) {
-                return '0px 0px 10px 1px ' + generateColorStyleString(rgbColor, 1);
-            },
-            clearElementChildren = function dom_clearElementChildren(element) {
-                while (element.firstChild) {
-                    element.removeChild(element.firstChild);
-                }
-            },
-            adjustCardChildElementStyles = function dom_adjustCardChildElementStyles(element, card) {
-                element.style.color = generateColorStyleString(card.suit.rgbColor);
-            },
-            adjustCardElementStyles = function dom_adjustCardElementStyles(element, cardInPlay) {
-                element.style.border = generateBorderStyleString(cardInPlay.card.suit.rgbColor);
-            
-                if (cardInPlay.foundationIndex === -1 && cardInPlay.freeCellIndex === -1) {
-                    element.style.boxShadow = generateBoxShadowStyleString(cardInPlay.card.suit.rgbColor);
-                }
-            },
-            generateCardChildElement = function dom_generateCardChildElement(card, cardElementChildIndex) {
-                var element = document.createElement('div');
-            
-                element.classList.add('suit');
-                adjustCardChildElementStyles(element, card);
-            
-                switch (cardElementChildIndex) {
-                case cardElementChildIndices.topLeftCorner:
+    var cascadeCardSpacingPixels = 215,
+        attributeSplitter = '-',
+        alignClasses = {
+            left: 'align-left',
+            right: 'align-right'
+        },
+        cardElementChildren = {
+            topLeftCorner: {
+                build: function dom_cardElementChildren_topLeftCorner_build(element, card) {
                     element.classList.add('small-card-suit');
                     element.classList.add(alignClasses.left);
                     element.innerHTML = card.value + card.suit.unicodeSymbol;
-                    break;
-                case cardElementChildIndices.middle:
+                },
+                update: function dom_cardElementChildren_topLeftCorner_update(element, card) {
+                    element.innerHTML = card.value + card.suit.unicodeSymbol;
+                }
+            },
+            middle: {
+                build: function dom_cardElementChildren_middle_build(element, card) {
                     element.classList.add('middle-card-suit');
                     element.innerHTML = card.suit.unicodeSymbol;
-                    break;
-                case cardElementChildIndices.bottomRightCorner:
+                },
+                update: function dom_cardElementChildren_middle_update(element, card) {
+                    element.innerHTML = card.suit.unicodeSymbol;
+                }
+            },
+            bottomRightCorner: {
+                build: function dom_cardElementChildrenbottomRightCorner_build(element, card) {
                     element.classList.add('small-card-suit');
                     element.classList.add(alignClasses.right);
                     element.innerHTML = card.suit.unicodeSymbol + card.value;
-                    break;
-                }
-            
-                return element;
-            },
-            generateCascadeChildElement = function dom_generateCascadeChildElement(cardInPlay) {
-                var element = document.createElement('div');
-            
-                adjustCardElementStyles(element, cardInPlay);
-                element.classList.add('card');
-            
-                element.appendChild(generateCardChildElement(cardInPlay.card, cardElementChildIndices.topLeftCorner));
-                element.appendChild(generateCardChildElement(cardInPlay.card, cardElementChildIndices.middle));
-                element.appendChild(generateCardChildElement(cardInPlay.card, cardElementChildIndices.bottomRightCorner));
-            
-                return element;
-            },
-            updateCardChildElement = function dom_updateCardChildElement(card, element, cardElementChildIndex) {
-                adjustCardChildElementStyles(element, card);
-            
-                switch (cardElementChildIndex) {
-                case cardElementChildIndices.topLeftCorner:
-                    element.innerHTML = card.value + card.suit.unicodeSymbol;
-                    break;
-                case cardElementChildIndices.middle:
-                    element.innerHTML = card.suit.unicodeSymbol;
-                    break;
-                case cardElementChildIndices.bottomRightCorner:
+                },
+                update: function dom_cardElementChildrenbottomRightCorner_update(element, card) {
                     element.innerHTML = card.suit.unicodeSymbol + card.value;
-                    break;
                 }
-            },
-            updateCardElement = function dom_updateCardElement(cardInPlay, element) {
-                if (cardInPlay.isSelected) {
-                    element.classList.add('selected-card');
-                } else {
-                    element.classList.remove('selected-card');
-                    adjustCardElementStyles(element, cardInPlay);
-                }
-            
-                updateCardChildElement(cardInPlay.card, element.children[cardElementChildIndices.topLeftCorner], cardElementChildIndices.topLeftCorner);
-                updateCardChildElement(cardInPlay.card, element.children[cardElementChildIndices.middle], cardElementChildIndices.middle);
-                updateCardChildElement(cardInPlay.card, element.children[cardElementChildIndices.bottomRightCorner], cardElementChildIndices.bottomRightCorner);
-            },
-            fillCascadeElements = function dom_fillCascadeElements(game) {
-                var i,
-                    j,
-                    cascade,
-                    cardElement;
-            
-                for (i = 0; i < window.freeCell.current.configuration.numberOfCascades; ++i) {
-                    cascade = dom.playingFieldElements.cascades.children[i];
-                
-                    for (j = 0; j < window.freeCell.current.configuration.cascadeDistribution[i]; ++j) {
-                        cardElement = generateCascadeChildElement(game.cascadeCardsInPlay[i][j]);
-                        cardElement.id = i + attributeSplitter + j;
-                        cardElement.onclick = game.cascadeCardElementClick;
-                        cardElement.ondblclick = game.cascadeCardElementDoubleClick;
-                    
-                        if (j > 0) {
-                            cardElement.style.marginTop = -cascadeCardSpacingPixels + 'px';
-                        }
-                    
-                        cascade.appendChild(cardElement);
-                    }
-                }
-            },
-            buildChild = function dom_buildChild(index, playingFieldElement) {
-                var element = document.createElement('div');
-            
-                element.classList.add(playingFieldElement.childClass);
-                element.id = playingFieldElement.childIdPrefix + attributeSplitter + index;
-                playingFieldElement.root.appendChild(element);
-                playingFieldElement.children.push(element);
-            },
-            buildChildren = function dom_buildChildren(playingFieldElement) {
-                var i;
-            
-                for (i = 0; i < playingFieldElement.numberOfChildren; ++i) {
-                    buildChild(i, playingFieldElement);
-                }
-            };
-        
-        dom.menuElements = {
+            }
+        },
+        menuElements = {
             newGameButton: document.getElementById('new-game-button'),
             pauseButton: document.getElementById('pause-game-button'),
             redoButton: document.getElementById('redo-move-button'),
             replayGameButton: document.getElementById('replay-game-button'),
             undoButton: document.getElementById('undo-move-button'),
             gameTimer: document.getElementById('game-timer')
-        };
-        
-        dom.playingFieldElements = {
+        },
+        playingFieldElements = {
             freeCells: {
                 root: document.getElementById('free-cells'),
                 children: [],
@@ -176,58 +70,110 @@
                 childClass: 'cascade',
                 numberOfChildren: 0
             }
-        };
-        
-        dom.redrawPlayingFieldElements = function Dom_redrawPlayingFieldElements(game) {
-            if (game) {
-                var i,
-                    key;
-            
-                dom.playingFieldElements.freeCells.numberOfChildren = window.freeCell.current.configuration.numberOfFreeCells;
-                dom.playingFieldElements.foundations.numberOfChildren = window.freeCell.current.configuration.deck.numberOfSuits;
-                dom.playingFieldElements.cascades.numberOfChildren = window.freeCell.current.configuration.numberOfCascades;
-            
-                for (key in dom.playingFieldElements) {
-                    if (dom.playingFieldElements.hasOwnProperty(key)) {
-                        clearElementChildren(dom.playingFieldElements[key]);
-                        dom.playingFieldElements[key].children = [];
-                        buildChildren(dom.playingFieldElements[key]);
-                    }
-                }
-            
-                for (i = 0; i < window.freeCell.current.configuration.deck.numberOfSuits; ++i) {
-                    dom.updateFoundationElement(i);
-                }
-            
-                fillCascadeElements(game);
+        },
+        generateColorStyleString = function dom_generateColorStyleString(rgbColor, alpha) {
+            var alphaValue = alpha ? Math.max(Math.abs(alpha), 1) : 0;
+                
+            return 'rgb' + (alphaValue > 0 ? 'a' : '') + '(' + rgbColor.red + ',' + rgbColor.green + ',' + rgbColor.blue + (alphaValue > 0 ? ',' + alphaValue : '') + ')';
+        },
+        generateBorderStyleString = function dom_generateBorderStyleString(rgbColor) {
+            return '1px solid ' + generateColorStyleString(rgbColor);
+        },
+        generateBoxShadowStyleString = function dom_generateBoxShadowStyleString(rgbColor) {
+            return '0px 0px 10px 1px ' + generateColorStyleString(rgbColor, 1);
+        },
+        clearElementChildren = function dom_clearElementChildren(element) {
+            while (element.firstChild) {
+                element.removeChild(element.firstChild);
             }
-        };
-        
-        dom.getPlayingFieldElementChildIdFromEvent = function dom_getPlayingFieldElementChildIdFromEvent(event) {
-            return parseInt(event.currentTarget.id.split(attributeSplitter)[1], 10);
-        };
-        
-        dom.getCascadeChildElementIndicesFromEvent = function dom_getCascadeChildElementIndicesFromEvent(event) {
-            var idParts = event.currentTarget.id.split(attributeSplitter);
+        },
+        adjustCardChildElementStyles = function dom_adjustCardChildElementStyles(element, card) {
+            element.style.color = generateColorStyleString(card.suit.rgbColor);
+        },
+        adjustCardElementStyles = function dom_adjustCardElementStyles(element, cardInPlay) {
+            element.style.border = generateBorderStyleString(cardInPlay.card.suit.rgbColor);
             
-            return [
-                parseInt(idParts[0], 10),
-                parseInt(idParts[1], 10)
-            ];
-        };
-        
-        dom.updateFreeCellElement = function dom_updateFreeCellElement(index, cardInPlay) {
-            var freeCellElement = dom.playingFieldElements.freeCells.children[index];
+            if (cardInPlay.foundationIndex === -1 && cardInPlay.freeCellIndex === -1) {
+                element.style.boxShadow = generateBoxShadowStyleString(cardInPlay.card.suit.rgbColor);
+            }
+        },
+        generateCardChildElement = function dom_generateCardChildElement(card, cardElementChild) {
+            var element = document.createElement('div');
             
-            if (cardInPlay) {
-                updateCardElement(cardInPlay, freeCellElement);
+            element.classList.add('suit');
+            adjustCardChildElementStyles(element, card);
+            cardElementChild.build(element, card);
+            
+            return element;
+        },
+        generateCascadeChildElement = function dom_generateCascadeChildElement(cardInPlay) {
+            var element = document.createElement('div');
+            
+            adjustCardElementStyles(element, cardInPlay);
+            element.classList.add('card');
+            
+            element.appendChild(generateCardChildElement(cardInPlay.card, cardElementChildren.topLeftCorner));
+            element.appendChild(generateCardChildElement(cardInPlay.card, cardElementChildren.middle));
+            element.appendChild(generateCardChildElement(cardInPlay.card, cardElementChildren.bottomRightCorner));
+            
+            return element;
+        },
+        updateCardChildElement = function dom_updateCardChildElement(card, element, cardElementChild) {
+            adjustCardChildElementStyles(element, card);
+            cardElementChild.update(element, card);
+        },
+        updateCardElement = function dom_updateCardElement(cardInPlay, element) {
+            if (cardInPlay.isSelected) {
+                element.classList.add('selected-card');
             } else {
-                clearElementChildren(freeCellElement);
+                element.classList.remove('selected-card');
+                adjustCardElementStyles(element, cardInPlay);
             }
-        };
             
-        dom.updateFoundationElement = function dom_updateFoundationElement(index, cardInPlay) {
-            var foundationElement = dom.playingFieldElements.foundations.children[index],
+            updateCardChildElement(cardInPlay.card, element.children[cardElementChildren.topLeftCorner], cardElementChildren.topLeftCorner);
+            updateCardChildElement(cardInPlay.card, element.children[cardElementChildren.middle], cardElementChildren.middle);
+            updateCardChildElement(cardInPlay.card, element.children[cardElementChildren.bottomRightCorner], cardElementChildren.bottomRightCorner);
+        },
+        fillCascadeElements = function dom_fillCascadeElements(game) {
+            var i,
+                j,
+                cascade,
+                cardElement;
+            
+            for (i = 0; i < game.configuration.numberOfCascades; ++i) {
+                cascade = playingFieldElements.cascades.children[i];
+                
+                for (j = 0; j < game.configuration.cascadeDistribution[i]; ++j) {
+                    cardElement = generateCascadeChildElement(game.cascadeCardsInPlay[i][j]);
+                    cardElement.id = i + attributeSplitter + j;
+                    cardElement.onclick = game.cascadeCardElementClick;
+                    cardElement.ondblclick = game.cascadeCardElementDoubleClick;
+                    
+                    if (j > 0) {
+                        cardElement.style.marginTop = -cascadeCardSpacingPixels + 'px';
+                    }
+                    
+                    cascade.appendChild(cardElement);
+                }
+            }
+        },
+        buildChild = function dom_buildChild(index, playingFieldElement) {
+            var element = document.createElement('div');
+            
+            element.classList.add(playingFieldElement.childClass);
+            element.id = playingFieldElement.childIdPrefix + attributeSplitter + index;
+            playingFieldElement.root.appendChild(element);
+            playingFieldElement.children.push(element);
+        },
+        buildChildren = function dom_buildChildren(playingFieldElement) {
+            var i;
+            
+            for (i = 0; i < playingFieldElement.numberOfChildren; ++i) {
+                buildChild(i, playingFieldElement);
+            }
+        },
+        updateFoundationElement = function dom_updateFoundationElement(index, cardInPlay) {
+            var foundationElement = playingFieldElements.foundations.children[index],
                 foundationChild;
 
             if (cardInPlay) {
@@ -244,10 +190,46 @@
                 foundationElement.appendChild(foundationChild);
             }
         };
-        
-        dom.updateCascadeElement = function freeCell_updateCascadeElement(index, startingIndex, cascadeCardsInPlay) {
+    
+    window.freeCell.dom = {
+        getCascadeChildElementIndicesFromEvent: function dom_getCascadeChildElementIndicesFromEvent(event) {
+            var idParts = event.currentTarget.id.split(attributeSplitter);
+            
+            return [
+                parseInt(idParts[0], 10),
+                parseInt(idParts[1], 10)
+            ];
+        },
+        getPlayingFieldElementChildIdFromEvent: function dom_getPlayingFieldElementChildIdFromEvent(event) {
+            return parseInt(event.currentTarget.id.split(attributeSplitter)[1], 10);
+        },
+        redrawPlayingFieldElements: function Dom_redrawPlayingFieldElements(game) {
+            if (game) {
+                var i,
+                    key;
+            
+                playingFieldElements.freeCells.numberOfChildren = game.configuration.numberOfFreeCells;
+                playingFieldElements.foundations.numberOfChildren = game.configuration.deck.numberOfSuits;
+                playingFieldElements.cascades.numberOfChildren = game.configuration.numberOfCascades;
+            
+                for (key in playingFieldElements) {
+                    if (playingFieldElements.hasOwnProperty(key)) {
+                        clearElementChildren(playingFieldElements[key]);
+                        playingFieldElements[key].children = [];
+                        buildChildren(playingFieldElements[key]);
+                    }
+                }
+            
+                for (i = 0; i < game.configuration.deck.numberOfSuits; ++i) {
+                    updateFoundationElement(i);
+                }
+            
+                fillCascadeElements(game);
+            }
+        },
+        updateCascadeElement: function freeCell_updateCascadeElement(index, startingIndex, cascadeCardsInPlay) {
             var i,
-                cascadeElement = dom.playingFieldElements.cascades.children[index],
+                cascadeElement = playingFieldElements.cascades.children[index],
                 startingCardInPlay = cascadeCardsInPlay[startingIndex],
                 endingCardInPlay = cascadeCardsInPlay[cascadeCardsInPlay.length - 1];
             
@@ -260,8 +242,16 @@
                     cascadeElement.removeChild(cascadeElement.lastChild);
                 }
             }
-        };
-    }
-    
-    window.freeCell.dom = new Dom();
+        },
+        updateFoundationElement: updateFoundationElement,
+        updateFreeCellElement: function dom_updateFreeCellElement(index, cardInPlay) {
+            var freeCellElement = playingFieldElements.freeCells.children[index];
+            
+            if (cardInPlay) {
+                updateCardElement(cardInPlay, freeCellElement);
+            } else {
+                clearElementChildren(freeCellElement);
+            }
+        }
+    };
 }());
