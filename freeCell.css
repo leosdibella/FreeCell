@@ -1,0 +1,126 @@
+html,
+body {
+    margin: 0px;
+    height: auto;
+    min-height: 100%;
+    overflow: auto;
+}
+
+#table-top {
+    display: inline-flex;
+    padding: 10px 18px;
+}
+
+.suit {
+    text-align: center;
+}
+
+.small-card-suit {
+    font-size: 30px;
+    height: 35px;
+}
+
+.card { 
+    border-radius: 5px;
+    width: 150px;
+    height: 250px;
+    background-color: rgb(256, 256, 256);
+    position: relative;
+    cursor: pointer;
+}
+
+.middle-card-suit {
+    font-size: 60px;
+    height: 80px;
+    margin: 50px auto;
+}
+
+.align-right {
+    text-align: right;
+    padding-right: 5px;
+}
+
+.align-left {
+    text-align: left;
+    padding-left: 5px;
+}
+
+#playing-field {
+    background-color: rgb(20, 190, 200);
+    min-height: calc(100vh + 20px);
+    height: auto;
+}
+
+#foundations,
+#free-cells {
+    display: inline-block;
+}
+
+.foundation,
+.free-cell {
+    border-radius: 5px;
+    width: 150px;
+    height: 250px;
+    position: relative;
+    display: inline-block;
+    margin: 0px 5px;
+    border: 1px solid rgb(256, 256, 256);
+    cursor: pointer;
+}
+
+#menu-buttons {
+    padding: 10px 10px 0px 10px;
+}
+
+#menu-buttons > button {
+    border: 0px;
+    font-size: 16px;
+    background-color: #3d3d3d;
+    color: #ffffff;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#menu-buttons > button:active,
+#menu-buttons > button:focus,
+#menu-buttons > button:target {
+    outline: none;
+}
+
+#menu-buttons > button:disabled {
+    
+}
+
+.foundation-suit {
+    font-size: 90px;
+    margin: 74px auto;
+}
+
+#table-top-spacer {
+    background-color: rgb(0, 0, 0);
+    width: 1px;
+    margin: 0px 5px;
+}
+
+#cascades {
+    display: inline-flex;
+}
+
+.cascade {
+    margin: 0px 8px;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.selected-card {
+    border: 1px solid rgb(255, 105, 180);
+    -webkit-box-shadow: 0px 0px 10px 1px rgba(255, 105, 180, 1);
+    -moz-box-shadow: 0px 0px 10px 1px rgba(255, 105, 180, 1);
+    box-shadow: 0px 0px 10px 1px rgba(255, 105, 180, 1);
+    background-color: rgb(128, 0, 128);
+}
+
+.selected-card > div {
+    color: rgb(255, 105, 180);
+}
