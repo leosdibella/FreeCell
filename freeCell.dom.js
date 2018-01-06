@@ -189,42 +189,46 @@
                 
                 foundationElement.appendChild(foundationChild);
             }
+        },
+        redrawPlayingFieldElements = function dom_redrawPlayingFieldElements(game) {
+            var i,
+                key;
+            
+            playingFieldElements.freeCells.numberOfChildren = game.configuration.numberOfFreeCells;
+            playingFieldElements.foundations.numberOfChildren = game.configuration.deck.numberOfSuits;
+            playingFieldElements.cascades.numberOfChildren = game.configuration.numberOfCascades;
+            
+            for (key in playingFieldElements) {
+                if (playingFieldElements.hasOwnProperty(key)) {
+                    clearElementChildren(playingFieldElements[key]);
+                    playingFieldElements[key].children = [];
+                    buildChildren(playingFieldElements[key]);
+                }
+            }
+            
+            for (i = 0; i < game.configuration.deck.numberOfSuits; ++i) {
+                updateFoundationElement(i);
+            }
+            
+            fillCascadeElements(game);
         };
+        
     
     window.freeCell.dom = {
         getCascadeChildElementIndicesFromEvent: function dom_getCascadeChildElementIndicesFromEvent(event) {
             var idParts = event.currentTarget.id.split(attributeSplitter);
             
             return [
-                parseInt(idParts[0], 10),
-                parseInt(idParts[1], 10)
+                window.freeCell.parseInt(idParts[0]),
+                window.freeCell.parseInt(idParts[1])
             ];
         },
         getPlayingFieldElementChildIdFromEvent: function dom_getPlayingFieldElementChildIdFromEvent(event) {
-            return parseInt(event.currentTarget.id.split(attributeSplitter)[1], 10);
+            return window.freeCell.parseInt(event.currentTarget.id.split(attributeSplitter)[1]);
         },
-        redrawPlayingFieldElements: function Dom_redrawPlayingFieldElements(game) {
+        linkGameToDom: function dom_linkGameToDom(game) {
             if (game) {
-                var i,
-                    key;
-            
-                playingFieldElements.freeCells.numberOfChildren = game.configuration.numberOfFreeCells;
-                playingFieldElements.foundations.numberOfChildren = game.configuration.deck.numberOfSuits;
-                playingFieldElements.cascades.numberOfChildren = game.configuration.numberOfCascades;
-            
-                for (key in playingFieldElements) {
-                    if (playingFieldElements.hasOwnProperty(key)) {
-                        clearElementChildren(playingFieldElements[key]);
-                        playingFieldElements[key].children = [];
-                        buildChildren(playingFieldElements[key]);
-                    }
-                }
-            
-                for (i = 0; i < game.configuration.deck.numberOfSuits; ++i) {
-                    updateFoundationElement(i);
-                }
-            
-                fillCascadeElements(game);
+                redrawPlayingFieldElements(game);
             }
         },
         updateCascadeElement: function freeCell_updateCascadeElement(index, startingIndex, cascadeCardsInPlay) {
