@@ -32,7 +32,7 @@
                 timeout = setTimeout(function () {
                     if (!isPaused) {
                         incrementGameTime();
-                        window.freeCell.defaults.dom.menuDomEelements.gameTimer.innerHTML = getGameTimeString();
+                        window.freeCell.dom.menuDomEelements.gameTimer.innerHTML = getGameTimeString();
                     }
                     
                     countTime();
@@ -46,11 +46,11 @@
             clearTimeout(timeout);
             
             if (!maintainTime) {
-                window.freeCell.defaults.dom.menuDomEelements.gameTimer.innerHTML = '00:00:00';
+                window.freeCell.dom.menuDomEelements.gameTimer.innerHTML = '00:00:00';
             }
         };
         
-        window.freeCell.defaults.dom.menuDomEelements.pauseButton.onclick = pauseGameTime;
+        window.freeCell.dom.menuDomEelements.pauseButton.onclick = pauseGameTime;
         countTime();
     }
     

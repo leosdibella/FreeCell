@@ -9,6 +9,8 @@
     };
     
     window.freeCell = {
+        current: {},
+        defaults: {},
         utilities: {
             parseInt: function utilities_parseInt(value) {
                 return Number.parseInt(value, 10);
@@ -24,7 +26,6 @@
             isNonEmptyString: function utilities_isNonEmptyString(value) {
                 return isString(value) ? value.length > 0 : false;
             }
-        },
-        defaults: {}
+        }
     };
 }());

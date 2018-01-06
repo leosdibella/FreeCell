@@ -34,7 +34,8 @@
     }
     
     window.freeCell.Configuration = Configuration;
-    window.freeCell.defaults.configuration = new Configuration();
+    window.freeCell.current.configuration = new Configuration();
+    window.freeCell.defaults.configuration = window.freeCell.current.configuration;
     window.freeCell.defaults.numberOfFreeCells = defaultNumberOfFreeCells;
     window.freeCell.defaults.numberOfCascades = defaultNumberOfCascades;
 }());
