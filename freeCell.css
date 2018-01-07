@@ -62,7 +62,8 @@ html {
 }
 
 .foundation,
-.free-cell {
+.free-cell,
+.cascade-empty {
     border-radius: 5px;
     width: 150px;
     height: 250px;

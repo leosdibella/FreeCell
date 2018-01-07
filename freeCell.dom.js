@@ -141,6 +141,8 @@
                 adjustCardElementStyles(element, cardInPlay.card.suit.rgbColor);
             }
             
+            element.style.backgroundColor = '#ffffff';
+            
             for (key in cardElementChildren) {
                 if (cardElementChildren.hasOwnProperty(key)) {
                     generatedElement = updateCardChildElement(cardInPlay.card, element.childNodes[cardElementChildren[key].childIndex], cardElementChildren[key]);
@@ -151,26 +153,26 @@
                 }
             }
         },
+        generateAndAppendCardToCascade = function dom_appendCardToCascade(cardInPlay, game, cascadeIndex, cascadeChildIndex, cascadeElement) {
+            var cardElement = generateCascadeChildElement(cardInPlay);
+            
+            cardElement.id = cascadeIndex + attributeSplitter + cascadeChildIndex;
+            cardElement.onclick = game.cascadeCardElementClick;
+            cardElement.ondblclick = game.cascadeCardElementDoubleClick;
+                    
+            if (cascadeChildIndex > 0) {
+                cardElement.style.marginTop = -cascadeCardSpacingPixels + 'px';
+            }
+            
+            cascadeElement.appendChild(cardElement);
+        },
         fillCascadeElements = function dom_fillCascadeElements(game) {
             var i,
-                j,
-                cascade,
-                cardElement;
+                j;
             
             for (i = 0; i < game.configuration.numberOfCascades; ++i) {
-                cascade = playingFieldElements.cascades.children[i];
-                
                 for (j = 0; j < game.configuration.cascadeDistribution[i]; ++j) {
-                    cardElement = generateCascadeChildElement(game.cascadeCardsInPlay[i][j]);
-                    cardElement.id = i + attributeSplitter + j;
-                    cardElement.onclick = game.cascadeCardElementClick;
-                    cardElement.ondblclick = game.cascadeCardElementDoubleClick;
-                    
-                    if (j > 0) {
-                        cardElement.style.marginTop = -cascadeCardSpacingPixels + 'px';
-                    }
-                    
-                    cascade.appendChild(cardElement);
+                    generateAndAppendCardToCascade(game.cascadeCardsInPlay[i][j], game, i, j, playingFieldElements.cascades.children[i])
                 }
             }
         },
@@ -199,7 +201,6 @@
                 }
                 
                 updateCardElement(cardInPlay, foundationElement);
-                foundationElement.style.backgroundColor = '#ffffff';
             } else {
                 clearElementChildren(foundationElement);
                 
@@ -292,7 +293,7 @@
         toggleUndoButtonDisabled: function dom_toggleRedoButtonDisabled(isDisabled) {
             toggleButtonDisabled(menuElements.undoButton, isDisabled);
         },
-        updateCascadeElement: function dom_updateCascadeElement(index, startingIndex, cascadeCardsInPlay) {
+        updateCascadeElement: function dom_updateCascadeElement(game, index, startingIndex, cascadeCardsInPlay) {
             var i,
                 cascadeElement = playingFieldElements.cascades.children[index],
                 startingCardInPlay = cascadeCardsInPlay[startingIndex],
@@ -300,12 +301,18 @@
             
             if (startingCardInPlay.cascadeChildIndex > cascadeElement.childNodes.length - 1) {
                 for (i = startingCardInPlay.cascadeChildIndex; i <= endingCardInPlay.cascadeChildIndex; ++i) {
-                    cascadeElement.appendChild(generateCascadeChildElement(cascadeCardsInPlay[i]));
+                    generateAndAppendCardToCascade(cascadeCardsInPlay[i], game, index, i, cascadeElement);
                 }
             } else {
                 for (i = endingCardInPlay.cascadeChildIndex; i >= startingCardInPlay.cascadeChildIndex; --i) {
                     cascadeElement.removeChild(cascadeElement.lastChild);
                 }
+            }
+            
+            if (cascadeElement.childNodes.length === 0) {
+                cascadeElement.classList.add('cascade-empty');
+            } else {
+                cascadeElement.classList.remove('cascade-empty');
             }
         },
         updateFoundationElement: updateFoundationElement,
@@ -316,6 +323,7 @@
                 updateCardElement(cardInPlay, freeCellElement);
             } else {
                 clearElementChildren(freeCellElement);
+                freeCellElement.style.backgroundColor = 'transparent';
             }
         }
     };

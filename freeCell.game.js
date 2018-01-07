@@ -78,19 +78,16 @@
             },
             updatePlayingFieldCascades = function Game_updatePlayingFieldCascades() {
                 var i,
-                    j,
-                    currentCard,
-                    previousCard,
+                    lengthDifference,
                     move = game.moves[game.moveIndex];
 
                 for (i = 0; i < game.configuration.numberOfCascades; ++i) {
-                    if (move.cascadeCardsInPlay[i].length !== game.cascadeCardsInPlay[i].length) {
-                        for (j = 0; j < game.configuration.cascadeDistribution[i]; ++j) {
-                            if (move.cascadeCardsInPlay[i][j] !== game.cascadeCardsInPlay[i][j]) {
-                                window.freeCell.dom.updateCascadeElement(i, j, game.cascadeCardsInPlay[i]);
-                                break;
-                            }
-                        }
+                    lengthDifference = move.cascadeCardsInPlay[i].length - game.cascadeCardsInPlay[i].length;
+                    
+                    if (lengthDifference > 0) {
+                        window.freeCell.dom.updateCascadeElement(game, i, game.cascadeCardsInPlay[i].length - 1, move.cascadeCardsInPlay[i]);
+                    } else if (lengthDifference < 0) {
+                        window.freeCell.dom.updateCascadeElement(game, i, move.cascadeCardsInPlay[i].length - 1, game.cascadeCardsInPlay[i]);
                     }
                 }
             },
