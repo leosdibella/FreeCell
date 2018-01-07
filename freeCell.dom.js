@@ -14,10 +14,10 @@
                 build: function dom_cardElementChildren_topLeftCorner_build(element, card) {
                     element.classList.add('small-card-suit');
                     element.classList.add(alignClasses.left);
-                    element.innerHTML = card.value + card.suit.unicodeSymbol;
+                    element.innerHTML = card.valueAsString + card.suit.unicodeSymbol;
                 },
                 update: function dom_cardElementChildren_topLeftCorner_update(element, card) {
-                    element.innerHTML = card.value + card.suit.unicodeSymbol;
+                    element.innerHTML = card.valueAsString + card.suit.unicodeSymbol;
                 }
             },
             middle: {
@@ -33,10 +33,10 @@
                 build: function dom_cardElementChildrenbottomRightCorner_build(element, card) {
                     element.classList.add('small-card-suit');
                     element.classList.add(alignClasses.right);
-                    element.innerHTML = card.suit.unicodeSymbol + card.value;
+                    element.innerHTML = card.suit.unicodeSymbol + card.valueAsString;
                 },
                 update: function dom_cardElementChildrenbottomRightCorner_update(element, card) {
-                    element.innerHTML = card.suit.unicodeSymbol + card.value;
+                    element.innerHTML = card.suit.unicodeSymbol + card.valueAsString;
                 }
             }
         },
@@ -89,21 +89,18 @@
                 element.removeChild(element.firstChild);
             }
         },
-        adjustCardChildElementStyles = function dom_adjustCardChildElementStyles(element, card) {
-            element.style.color = generateColorStyleString(card.suit.rgbColor);
+        adjustCardChildElementStyles = function dom_adjustCardChildElementStyles(element, rgbColor) {
+            element.style.color = generateColorStyleString(rgbColor);
         },
-        adjustCardElementStyles = function dom_adjustCardElementStyles(element, cardInPlay) {
-            element.style.border = generateBorderStyleString(cardInPlay.card.suit.rgbColor);
-            
-            if (cardInPlay.foundationIndex === -1 && cardInPlay.freeCellIndex === -1) {
-                element.style.boxShadow = generateBoxShadowStyleString(cardInPlay.card.suit.rgbColor);
-            }
+        adjustCardElementStyles = function dom_adjustCardElementStyles(element, rgbColor) {
+            element.style.border = generateBorderStyleString(rgbColor);
+            element.style.boxShadow = generateBoxShadowStyleString(rgbColor);
         },
         generateCardChildElement = function dom_generateCardChildElement(card, cardElementChild) {
             var element = document.createElement('div');
             
             element.classList.add('suit');
-            adjustCardChildElementStyles(element, card);
+            adjustCardChildElementStyles(element, card.suit.rgbColor);
             cardElementChild.build(element, card);
             
             return element;
@@ -111,7 +108,7 @@
         generateCascadeChildElement = function dom_generateCascadeChildElement(cardInPlay) {
             var element = document.createElement('div');
             
-            adjustCardElementStyles(element, cardInPlay);
+            adjustCardElementStyles(element, cardInPlay.card.suit.rgbColor);
             element.classList.add('card');
             
             element.appendChild(generateCardChildElement(cardInPlay.card, cardElementChildren.topLeftCorner));
@@ -121,7 +118,7 @@
             return element;
         },
         updateCardChildElement = function dom_updateCardChildElement(card, element, cardElementChild) {
-            adjustCardChildElementStyles(element, card);
+            adjustCardChildElementStyles(element, card.suit.rgbColor);
             cardElementChild.update(element, card);
         },
         updateCardElement = function dom_updateCardElement(cardInPlay, element) {
@@ -129,7 +126,7 @@
                 element.classList.add('selected-card');
             } else {
                 element.classList.remove('selected-card');
-                adjustCardElementStyles(element, cardInPlay);
+                adjustCardElementStyles(element, cardInPlay.card.sut.rgbColor);
             }
             
             updateCardChildElement(cardInPlay.card, element.children[cardElementChildren.topLeftCorner], cardElementChildren.topLeftCorner);
@@ -174,7 +171,7 @@
                 buildChild(i, playingFieldElement);
             }
         },
-        updateFoundationElement = function dom_updateFoundationElement(index, cardInPlay) {
+        updateFoundationElement = function dom_updateFoundationElement(index, cardInPlay, suit) {
             var foundationElement = playingFieldElements.foundations.children[index],
                 foundationChild;
 
@@ -186,8 +183,9 @@
                 foundationChild = document.createElement('div');
                 foundationChild.classList.add('suit');
                 foundationChild.classList.add('foundation-suit');
-                foundationChild.style.color = generateColorStyleString(window.freeCell.current.configuration.deck.suitOrder[index].rgbColor);
-                foundationChild.innerHTML = window.freeCell.current.configuration.deck.suitOrder[index].unicodeSymbol;
+                adjustCardChildElementStyles(foundationChild, suit.rgbColor);
+                adjustCardElementStyles(foundationElement, suit.rgbColor);
+                foundationChild.innerHTML = suit.unicodeSymbol;
                 
                 foundationElement.appendChild(foundationChild);
             }
@@ -209,7 +207,7 @@
             }
             
             for (i = 0; i < game.configuration.deck.numberOfSuits; ++i) {
-                updateFoundationElement(i);
+                updateFoundationElement(i, null, game.configuration.deck.suitOrder[i]);
                 playingFieldElements.foundations.children[i].onclick = game.foundationElementClick;
             }
             

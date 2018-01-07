@@ -22,8 +22,8 @@
     window.freeCell.Suit = Suit;
     
     window.freeCell.defaults.suits = {
-        clubs: new Suit(window.freeCell.defaults.rgbColors.black, '&clubs;'),
         diamonds: new Suit(window.freeCell.defaults.rgbColors.red, '&diams;'),
+        clubs: new Suit(window.freeCell.defaults.rgbColors.black, '&clubs;'),
         hearts: new Suit(window.freeCell.defaults.rgbColors.red, '&hearts;'),
         spades: new Suit(window.freeCell.defaults.rgbColors.black, '&spades;')
     };
