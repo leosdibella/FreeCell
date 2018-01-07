@@ -21,7 +21,7 @@
             move.foundationCardsInPlay.push([]);
             
             for (j = 0; j < foundationCardsInPlay[i].length; ++j) {
-                move.foundationCardsInPlay.push(foundationCardsInPlay[i][j]);
+                move.foundationCardsInPlay[i].push(foundationCardsInPlay[i][j]);
             }
         }
         

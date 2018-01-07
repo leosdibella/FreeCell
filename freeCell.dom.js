@@ -153,12 +153,13 @@
                 }
             }
         },
-        generateAndAppendCardToCascade = function dom_appendCardToCascade(cardInPlay, game, cascadeIndex, cascadeChildIndex, cascadeElement) {
-            var cardElement = generateCascadeChildElement(cardInPlay);
+        generateAndAppendCardToCascade = function dom_appendCardToCascade(cardInPlay, cascadeIndex, cascadeChildIndex, cascadeElement, game) {
+            var currentGame = game || window.freeCell.current.game,
+                cardElement = generateCascadeChildElement(cardInPlay);
             
             cardElement.id = cascadeIndex + attributeSplitter + cascadeChildIndex;
-            cardElement.onclick = game.cascadeCardElementClick;
-            cardElement.ondblclick = game.cascadeCardElementDoubleClick;
+            cardElement.onclick = currentGame.cascadeCardElementClick;
+            cardElement.ondblclick = currentGame.cascadeCardElementDoubleClick;
                     
             if (cascadeChildIndex > 0) {
                 cardElement.style.marginTop = -cascadeCardSpacingPixels + 'px';
@@ -172,7 +173,7 @@
             
             for (i = 0; i < game.configuration.numberOfCascades; ++i) {
                 for (j = 0; j < game.configuration.cascadeDistribution[i]; ++j) {
-                    generateAndAppendCardToCascade(game.cascadeCardsInPlay[i][j], game, i, j, playingFieldElements.cascades.children[i]);
+                    generateAndAppendCardToCascade(game.cascadeCardsInPlay[i][j], i, j, playingFieldElements.cascades.children[i], game);
                 }
             }
         },
@@ -300,7 +301,7 @@
         toggleAutoMoveButtonDisabled: function dom_toggleAutoMoveButtonDisabled(isDisabled) {
             toggleButtonDisabled(menuElements.autoMoveButton, isDisabled);
         },
-        updateCascadeElement: function dom_updateCascadeElement(game, index, startingIndex, cascadeCardsInPlay) {
+        updateCascadeElement: function dom_updateCascadeElement(index, startingIndex, cascadeCardsInPlay) {
             var i,
                 cascadeElement = playingFieldElements.cascades.children[index],
                 startingCardInPlay = cascadeCardsInPlay[startingIndex],
@@ -308,7 +309,7 @@
             
             if (startingCardInPlay.cascadeChildIndex > cascadeElement.childNodes.length - 1) {
                 for (i = startingCardInPlay.cascadeChildIndex; i <= endingCardInPlay.cascadeChildIndex; ++i) {
-                    generateAndAppendCardToCascade(cascadeCardsInPlay[i], game, index, i, cascadeElement);
+                    generateAndAppendCardToCascade(cascadeCardsInPlay[i], index, i, cascadeElement);
                 }
             } else {
                 for (i = endingCardInPlay.cascadeChildIndex; i >= startingCardInPlay.cascadeChildIndex; --i) {
