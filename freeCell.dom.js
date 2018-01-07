@@ -46,7 +46,8 @@
             redoButton: document.getElementById('redo-move-button'),
             replayGameButton: document.getElementById('replay-game-button'),
             undoButton: document.getElementById('undo-move-button'),
-            gameTimer: document.getElementById('game-timer')
+            gameTimer: document.getElementById('game-timer'),
+            configure: document.getElementById('configure-button')
         },
         playingFieldElements = {
             freeCells: {
@@ -200,7 +201,7 @@
             
             for (key in playingFieldElements) {
                 if (playingFieldElements.hasOwnProperty(key)) {
-                    clearElementChildren(playingFieldElements[key]);
+                    clearElementChildren(playingFieldElements[key].root);
                     playingFieldElements[key].children = [];
                     buildChildren(playingFieldElements[key]);
                 }
@@ -208,6 +209,16 @@
             
             for (i = 0; i < game.configuration.deck.numberOfSuits; ++i) {
                 updateFoundationElement(i);
+                playingFieldElements.foundations.children[i].onclick = game.foundationElementClick;
+            }
+            
+            for (i = 0; i < game.configuration.numberOfFreeCells; ++i) {
+                playingFieldElements.freeCells.children[i].onclick = game.freeCellElementClick;
+                playingFieldElements.freeCells.children[i].ondblclick = game.freeCellElementDoubleClick;
+            }
+            
+            for (i = 0; i < game.configuration.numberOfCascades; ++i) {
+                playingFieldElements.cascades.children[i].onclick = game.cascadeElementClick;
             }
             
             fillCascadeElements(game);
@@ -217,7 +228,6 @@
                 buttonElement.disabled = !!isDisabled;
             }
         };
-        
     
     window.freeCell.dom = {
         getCascadeChildElementIndicesFromEvent: function dom_getCascadeChildElementIndicesFromEvent(event) {
@@ -234,7 +244,15 @@
         linkGameToDom: function dom_linkGameToDom(game) {
             if (game) {
                 redrawPlayingFieldElements(game);
+                menuElements.pauseButton.onclick = game.pause;
+                menuElements.redoButton.onclick = game.redoMove;
+                menuElements.undoButton.onclick = game.undoMove;
+                menuElements.newGameButton.onclick = window.freeCell.main.startNewGame;
+                menuElements.replayGameButton.onclick = game.replay;
             }
+        },
+        setGameTimer: function dom_setGameTimer(time) {
+            menuElements.gameTimer.innerHTML = time;
         },
         toggleRedoButtonDisabled: function dom_toggleRedoButtonDisabled(isDisabled) {
             toggleButtonDisabled(menuElements.redoButton, isDisabled);

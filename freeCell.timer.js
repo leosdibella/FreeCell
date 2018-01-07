@@ -32,25 +32,25 @@
                 timeout = setTimeout(function () {
                     if (!isPaused) {
                         incrementGameTime();
-                        window.freeCell.dom.menuDomEelements.gameTimer.innerHTML = getGameTimeString();
+                        window.freeCell.dom.setGameTimer(getGameTimeString());
                     }
                     
                     countTime();
                 }, 1000);
-            },
-            pauseGameTime = function Timer_pauseGameTime() {
-                isPaused = true;
             };
+        
+        timer.pause = function Timer_pause() {
+            isPaused = true;
+        };
         
         timer.stopTimer = function Timer_stopTimer(maintainTime) {
             clearTimeout(timeout);
             
             if (!maintainTime) {
-                window.freeCell.dom.menuDomEelements.gameTimer.innerHTML = '00:00:00';
+                window.freeCell.dom.setGameTimer('00:00:00');
             }
         };
         
-        window.freeCell.dom.menuDomEelements.pauseButton.onclick = pauseGameTime;
         countTime();
     }
     

@@ -2,8 +2,17 @@
 (function () {
     'use strict';
     
-    window.freeCell.current.game = new window.freeCell.Game(window.freeCell.current.configuration, window.freeCell.current.deck);
+    window.freeCell.main = {
+        startNewGame: function main_startNewGame() {
+            if (window.freeCell.current.game) {
+                window.freeCell.current.game.destroy();
+            }
+            
+            window.freeCell.current.game = new window.freeCell.Game();
+        }
+    };
     
+    window.freeCell.main.startNewGame();
 
        /*var  isValidChainContinuation = function isValidChainContinuation(baseCard, additionCard) {
             return additionCard.value === baseCard.value + 1 && additionCard.suit.colorClass !== baseCard.suit.colorClass;

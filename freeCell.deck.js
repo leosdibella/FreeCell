@@ -66,7 +66,7 @@
                 var suitIndex = Math.floor(number / deck.numberOfCardsPerSuit),
                     value = (number % deck.numberOfCardsPerSuit) + 1;
                 
-                return new window.freeCell.Card(suitIndex, value, deck.faceCardValues[value]);
+                return new window.freeCell.Card(deck.suitOrder[suitIndex], value, deck.faceCardValues[value]);
             },
             generateCards = function Deck_generateCards() {
                 var i,
@@ -90,13 +90,25 @@
                 
                 return suitOrder;
             },
+            getNumberOfSuits = function Deck_getNumberOfSuits() {
+                var key,
+                    numberOfSuits = 0;
+                
+                for (key in deck.suits) {
+                    if (deck.suits.hasOwnProperty(key)) {
+                        ++numberOfSuits;
+                    }
+                }
+                
+                return numberOfSuits;
+            },
             initialize = function Deck_initialize() {
                 var isDeckValid = isValidDeck();
                 
                 deck.faceCardValues = isDeckValid ? faceCardValues : defaultFaceCardValues;
                 deck.suits = isDeckValid ? suits : window.freeCell.defaults.suits;
                 deck.numberOfCardsPerSuit = isDeckValid ? numberOfCardsPerSuit : defaultNumberOfCardsPerSuit;
-                deck.numberOfSuits = deck.suits.length;
+                deck.numberOfSuits = getNumberOfSuits();
                 deck.totalNumberOfCards = deck.numberOfCardsPerSuit * deck.numberOfSuits;
                 deck.suitOrder = generateSuitOrder();
                 deck.cards = generateCards();

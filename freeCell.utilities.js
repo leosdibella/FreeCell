@@ -4,8 +4,6 @@
     
     var isString = function utilities_isString(value) {
         return typeof value === 'string';
-    }, isNonNegativeInteger = function utilities_isNonNegativeInteger(value) {
-        return Number.isInteger(value) && value > 0;
     };
     
     window.freeCell = {
@@ -15,9 +13,11 @@
             parseInt: function utilities_parseInt(value) {
                 return Number.parseInt(value, 10);
             },
-            isNonNegativeInteger: isNonNegativeInteger,
+            isNonNegativeInteger: function utilities_isNonNegativeInteger(value) {
+                return Number.isInteger(value) && value > -1;
+            },
             isPositiveInteger: function utilities_isPositiveInteger(value) {
-                return isNonNegativeInteger(value) && value > 0;
+                return Number.isInteger(value) && value > 0;
             },
             isObject: function utilities_isObject(value) {
                 return typeof value === 'object';
