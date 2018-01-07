@@ -9,6 +9,12 @@
                 window.freeCell.dom.toggleRedoButtonDisabled(game.moveIndex === game.moves.length - 1);
                 window.freeCell.dom.toggleUndoButtonDisabled(game.moveIndex === 0);
             },
+            unselectSelectedCard = function Game_unselectSelectedCard() {
+                if (game.selectedCard) {
+                    game.selectedCard.isSelected = false;
+                    game.selectedCard = null;
+                }
+            },
             getNumberOfOpenSpaces = function Game_getNumberOfOpenSpaces() {
                 var i,
                     numberOfOpenSpaces = 0;
@@ -92,7 +98,7 @@
                 updatePlayingFieldFreeCells();
                 updatePlayingFieldFoundations();
                 updatePlayingFieldCascades();
-                game.selectedCard = null;
+                unselectSelectedCard();
             },
             returnToFreeCellGameMove = function Game_returnToFreeCellGameMove(moveIndex) {
                 var move = game.moves[moveIndex];
@@ -118,12 +124,13 @@
             isSelectedCardLastInCascade = function Game_isSelectedCardLastInCascade() {
                 return game.selectedCard && game.cascadeCardsInPlay[game.selectedCard.cascadeIndex].length - 1 === game.selectedCard.cascadeChildIndex;
             },
-            canMoveSelectedCardToFoundation = function Game_canMoveSelectedCardToFoundation(foundationIndex) {
+            canMoveCardInPlayToFoundation = function Game_canMoveSelectedCardToFoundation(foundationIndex, cardInPlay) {
                 var foundation = game.foundationCardsInPlay[foundationIndex];
                 
-                return game.configuration.deck.suitOrder[foundationIndex] === game.selectedCard.suit
-                        && ((foundation.length === 0 && game.selectedCard.value === 1)
-                                || foundation[foundation.length - 1].value + 1 ===  game.selectedCard.value);
+                return cardInPlay
+                        && game.configuration.deck.suitOrder[foundationIndex] === cardInPlay.card.suit
+                        && ((foundation.length === 0 && cardInPlay.card.value === 1)
+                                || (foundation.length > 0 && foundation[foundation.length - 1].value + 1 ===  cardInPlay.card.value));
             },
             deal = function Game_deal(dontShuffle) {
                 var i,
@@ -144,6 +151,31 @@
                 
                 return cascadeCardsInPlay;
             },
+            getFoundationalPlacementCardInPlay = function Game_getFoundationalPlacementCardInPlay() {
+                var i,
+                    j,
+                    cardInPlay;
+            
+                for (i = 0; i < game.configuration.deck.numberOfSuits; ++i) {
+                    for (j = 0; j < game.configuration.numberOfCascades; ++j) {
+                        cardInPlay = game.cascadeCardsInPlay[j][game.cascadeCardsInPlay[j].length - 1];
+                        
+                        if (canMoveCardInPlayToFoundation(i, cardInPlay)) {
+                            return cardInPlay;
+                        }
+                    }
+                    
+                    for (j = 0; j < game.configuration.numberOfFreeCells; ++j) {
+                        cardInPlay = game.freeCellCardsInPlay[j];
+                        
+                        if (canMoveCardInPlayToFoundation(i, cardInPlay)) {
+                            return cardInPlay;
+                        }
+                    }
+                }
+                
+                return null;
+            },
             initialize = function Game_initialize(dontShuffle) {
                 var i;
                 
@@ -151,7 +183,7 @@
                 game.freeCellCardsInPlay = [];
                 game.foundationCardsInPlay = [];
                 game.cascadeCardsInPlay = deal(dontShuffle);
-                game.selectedCard = null;
+                unselectSelectedCard();
                 game.moves = [];
                 game.moveIndex = 0;
                 
@@ -204,7 +236,7 @@
                 
             if (game.cascadeCardsInPlay[cascadeCardIndices[0]].length - 1 === cascadeCardIndices[1]
                     && foundationIndex > -1
-                    && canMoveSelectedCardToFoundation(foundationIndex)) {
+                    && canMoveCardInPlayToFoundation(foundationIndex, game.selectedCard)) {
                 game.foundationCardsInPlay[foundationIndex].push(cascadeCard);
                 game.cascadeCardsInPlay[cascadeCardIndices[0]].pop();
                 commitFreeCellGameMove();
@@ -250,8 +282,7 @@
                         
                     commitFreeCellGameMove();
                 } else {
-                    game.selectedCard.isSelected = false;
-                    game.selectedCard = null;
+                    unselectSelectedCard();
                 }
             }
         };
@@ -261,17 +292,16 @@
                 freeCellCard = game.freeCellCardsInPlay[freeCellIndex],
                 foundationIndex;
                 
-            game.selectedCard.isSelected = false;
-            game.selectedCard = null;
-                
             if (freeCellCard) {
                 foundationIndex = game.configuration.deck.tryToGetSuitOrderFromSuit(freeCellCard.suit);
                     
-                if (foundationIndex > -1 && canMoveSelectedCardToFoundation(foundationIndex)) {
+                if (foundationIndex > -1 && canMoveCardInPlayToFoundation(foundationIndex, game.selectedCard)) {
                     game.foundationCardsInPlay[foundationIndex].push(freeCellCard);
                     game.freeCellCardsInPlay[freeCellIndex] = null;
                     commitFreeCellGameMove();
                 }
+            } else {
+                unselectSelectedCard();
             }
         };
         
@@ -280,7 +310,7 @@
                 lastInCascade = isSelectedCardLastInCascade();
                 
             if (game.selectedCard
-                    && canMoveSelectedCardToFoundation(foundationIndex)
+                    && canMoveCardInPlayToFoundation(foundationIndex, game.selectedCard)
                     && (game.selectedCard.freeCellIndex > -1 || lastInCascade)) {
                 game.selectedCard.isSelected = false;
                 game.foundationCardsInPlay[foundationIndex].push(game.selectedCard);
@@ -292,9 +322,27 @@
                 }
                     
                 commitFreeCellGameMove();
-            } else if (game.selectedCard) {
-                game.selectedCard.isSelected = false;
-                game.selectedCard = null;
+            } else {
+                unselectSelectedCard();
+            }
+        };
+        
+        game.autoMove = function Game_autoMove() {
+            var foundationIndex,
+                cardInPlay = getFoundationalPlacementCardInPlay();
+            unselectSelectedCard();
+            
+            if (cardInPlay) {
+                foundationIndex = game.configuration.deck.tryToGetSuitOrderIndexFromSuit(cardInPlay.card.suit);
+                game.foundationCardsInPlay[foundationIndex].push(cardInPlay);
+                
+                if (cardInPlay.freeCellIndex > -1) {
+                    game.freeCellCardsInPlay[cardInPlay.freeCellIndex] = null;
+                } else {
+                    game.cascadeCardsInPlay[cardInPlay.cascadeIndex].pop();
+                }
+                
+                commitFreeCellGameMove();
             }
         };
         

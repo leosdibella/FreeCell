@@ -18,7 +18,11 @@
         }
         
         for (i = 0; i < foundationCardsInPlay.length; ++i) {
-            move.foundationCardsInPlay.push(foundationCardsInPlay[i]);
+            move.foundationCardsInPlay.push([]);
+            
+            for (j = 0; j < foundationCardsInPlay[i].length; ++j) {
+                move.foundationCardsInPlay.push(foundationCardsInPlay[i][j]);
+            }
         }
         
         for (i = 0; i < cascadeCardsInPlay.length; ++i) {

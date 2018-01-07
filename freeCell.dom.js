@@ -11,6 +11,7 @@
         },
         cardElementChildren = {
             topLeftCorner: {
+                childIndex: 0,
                 build: function dom_cardElementChildren_topLeftCorner_build(element, card) {
                     element.classList.add('small-card-suit');
                     element.classList.add(alignClasses.left);
@@ -21,6 +22,7 @@
                 }
             },
             middle: {
+                childIndex: 1,
                 build: function dom_cardElementChildren_middle_build(element, card) {
                     element.classList.add('middle-card-suit');
                     element.innerHTML = card.suit.unicodeSymbol;
@@ -30,6 +32,7 @@
                 }
             },
             bottomRightCorner: {
+                childIndex: 2,
                 build: function dom_cardElementChildrenbottomRightCorner_build(element, card) {
                     element.classList.add('small-card-suit');
                     element.classList.add(alignClasses.right);
@@ -47,7 +50,7 @@
             replayGameButton: document.getElementById('replay-game-button'),
             undoButton: document.getElementById('undo-move-button'),
             gameTimer: document.getElementById('game-timer'),
-            configure: document.getElementById('configure-button'),
+            configureButton: document.getElementById('configure-button'),
             autoMove: document.getElementById('auto-move-button')
         },
         playingFieldElements = {
@@ -118,20 +121,35 @@
             return element;
         },
         updateCardChildElement = function dom_updateCardChildElement(card, element, cardElementChild) {
-            adjustCardChildElementStyles(element, card.suit.rgbColor);
-            cardElementChild.update(element, card);
+            if (element) {
+                adjustCardChildElementStyles(element, card.suit.rgbColor);
+                cardElementChild.update(element, card);
+                
+                return null;
+            } else {
+                return generateCardChildElement(card, cardElementChild);
+            }
         },
         updateCardElement = function dom_updateCardElement(cardInPlay, element) {
+            var key,
+                generatedElement;
+            
             if (cardInPlay.isSelected) {
                 element.classList.add('selected-card');
             } else {
                 element.classList.remove('selected-card');
-                adjustCardElementStyles(element, cardInPlay.card.sut.rgbColor);
+                adjustCardElementStyles(element, cardInPlay.card.suit.rgbColor);
             }
             
-            updateCardChildElement(cardInPlay.card, element.children[cardElementChildren.topLeftCorner], cardElementChildren.topLeftCorner);
-            updateCardChildElement(cardInPlay.card, element.children[cardElementChildren.middle], cardElementChildren.middle);
-            updateCardChildElement(cardInPlay.card, element.children[cardElementChildren.bottomRightCorner], cardElementChildren.bottomRightCorner);
+            for (key in cardElementChildren) {
+                if (cardElementChildren.hasOwnProperty(key)) {
+                    generatedElement = updateCardChildElement(cardInPlay.card, element.childNodes[cardElementChildren[key].childIndex], cardElementChildren[key]);
+                    
+                    if (generatedElement) {
+                        element.appendChild(generatedElement);
+                    }
+                }
+            }
         },
         fillCascadeElements = function dom_fillCascadeElements(game) {
             var i,
@@ -176,7 +194,12 @@
                 foundationChild;
 
             if (cardInPlay) {
+                if (foundationElement.childNodes.length === 1) {
+                    clearElementChildren(foundationElement);
+                }
+                
                 updateCardElement(cardInPlay, foundationElement);
+                foundationElement.style.backgroundColor = '#ffffff';
             } else {
                 clearElementChildren(foundationElement);
                 
@@ -226,7 +249,12 @@
             if (buttonElement) {
                 buttonElement.disabled = !!isDisabled;
             }
+        },
+        openConfigurationOverlay = function dom_openConfigurationOverlay() {
+            
         };
+    
+    menuElements.configureButton.onclick = openConfigurationOverlay;
     
     window.freeCell.dom = {
         getCascadeChildElementIndicesFromEvent: function dom_getCascadeChildElementIndicesFromEvent(event) {
@@ -245,6 +273,7 @@
                 redrawPlayingFieldElements(game);
                 menuElements.pauseButton.onclick = game.pause;
                 menuElements.redoButton.onclick = game.redoMove;
+                menuElements.autoMove.onclick = game.autoMove;
                 menuElements.undoButton.onclick = game.undoMove;
                 menuElements.newGameButton.onclick = window.freeCell.main.startNewGame;
                 menuElements.replayGameButton.onclick = game.replay;
