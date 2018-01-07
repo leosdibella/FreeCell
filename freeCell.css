@@ -47,7 +47,7 @@ body {
 
 #playing-field {
     background-color: rgb(20, 190, 200);
-    min-height: calc(100vh + 20px);
+    padding-bottom: 10px;
     height: auto;
 }
 
@@ -89,7 +89,8 @@ body {
 }
 
 #menu-buttons > button:disabled {
-    
+    color: #aaaaaa;
+    cursor: not-allowed;
 }
 
 .foundation-suit {

@@ -173,7 +173,8 @@
         };
         
         game.replay = function Game_replay() {
-            timer.stopGameTimer();
+            timer.stopTimer();
+            timer = new window.freeCell.Timer();
             initialize(true);
         };
         
