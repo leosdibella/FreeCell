@@ -116,7 +116,7 @@
                 toggleButtonsDisabled();
             },
             isSelectedCardLastInCascade = function Game_isSelectedCardLastInCascade() {
-                return game.cascadeCardsInPlay[game.selectedCard.cascadeIndex].length - 1 === game.selectedCard.cascadeChildIndex;
+                return game.selectedCard && game.cascadeCardsInPlay[game.selectedCard.cascadeIndex].length - 1 === game.selectedCard.cascadeChildIndex;
             },
             canMoveSelectedCardToFoundation = function Game_canMoveSelectedCardToFoundation(foundationIndex) {
                 var foundation = game.foundationCardsInPlay[foundationIndex];
@@ -212,7 +212,7 @@
         };
         
         game.cascadeElementClick = function Game_cascadeClick(event) {
-            var cascadeIndex = window.freeCell.dom.getPersistentDomChildElementIdFromEvent(event);
+            var cascadeIndex = window.freeCell.dom.getPlayingFieldElementChildIdFromEvent(event);
         };
         
         game.cascadeCardElementClick = function Game_cascadeCardClick(event) {
@@ -225,7 +225,7 @@
         };
         
         game.freeCellElementClick = function Game_freeCellCardClick(event) {
-            var freeCellIndex = window.freeCell.dom.getPersistentDomChildElementIdFromEvent(event),
+            var freeCellIndex = window.freeCell.dom.getPlayingFieldElementChildIdFromEvent(event),
                 lastInCascade;
                 
             if (game.freeCellCardsInPlay[freeCellIndex]) {
@@ -257,7 +257,7 @@
         };
         
         game.freeCellElementDoubleClick = function Game_freeCellElementDoubleClick(event) {
-            var freeCellIndex = window.freeCell.dom.getPersistentDomChildElementIdFromEvent(event),
+            var freeCellIndex = window.freeCell.dom.getPlayingFieldElementChildIdFromEvent(event),
                 freeCellCard = game.freeCellCardsInPlay[freeCellIndex],
                 foundationIndex;
                 
@@ -276,7 +276,7 @@
         };
         
         game.foundationElementClick = function Game_foundationCardClick(event) {
-            var foundationIndex = window.freeCell.dom.getPersistentDomChildElementIdFromEvent(event),
+            var foundationIndex = window.freeCell.dom.getPlayingFieldElementChildIdFromEvent(event),
                 lastInCascade = isSelectedCardLastInCascade();
                 
             if (game.selectedCard
@@ -292,7 +292,7 @@
                 }
                     
                 commitFreeCellGameMove();
-            } else {
+            } else if (game.selectedCard) {
                 game.selectedCard.isSelected = false;
                 game.selectedCard = null;
             }

@@ -234,12 +234,12 @@
             var idParts = event.currentTarget.id.split(attributeSplitter);
             
             return [
-                window.freeCell.parseInt(idParts[0]),
-                window.freeCell.parseInt(idParts[1])
+                window.freeCell.utilities.parseInt(idParts[0]),
+                window.freeCell.utilities.parseInt(idParts[1])
             ];
         },
         getPlayingFieldElementChildIdFromEvent: function dom_getPlayingFieldElementChildIdFromEvent(event) {
-            return window.freeCell.parseInt(event.currentTarget.id.split(attributeSplitter)[1]);
+            return window.freeCell.utilities.parseInt(event.currentTarget.id.split(attributeSplitter)[1]);
         },
         linkGameToDom: function dom_linkGameToDom(game) {
             if (game) {
