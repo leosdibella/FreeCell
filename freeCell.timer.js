@@ -44,6 +44,11 @@
             window.freeCell.dom.togglePauseButtonText(isPaused);
         };
         
+        timer.resume = function Timer_resume() {
+            isPaused = false;
+            window.freeCell.dom.togglePauseButtonText(false);
+        };
+        
         timer.stopTimer = function Timer_stopTimer(maintainTime) {
             clearTimeout(timeout);
             

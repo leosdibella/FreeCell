@@ -51,7 +51,7 @@
             undoButton: document.getElementById('undo-move-button'),
             gameTimer: document.getElementById('game-timer'),
             configureButton: document.getElementById('configure-button'),
-            autoMove: document.getElementById('auto-move-button')
+            autoMoveButton: document.getElementById('auto-move-button')
         },
         playingFieldElements = {
             freeCells: {
@@ -172,7 +172,7 @@
             
             for (i = 0; i < game.configuration.numberOfCascades; ++i) {
                 for (j = 0; j < game.configuration.cascadeDistribution[i]; ++j) {
-                    generateAndAppendCardToCascade(game.cascadeCardsInPlay[i][j], game, i, j, playingFieldElements.cascades.children[i])
+                    generateAndAppendCardToCascade(game.cascadeCardsInPlay[i][j], game, i, j, playingFieldElements.cascades.children[i]);
                 }
             }
         },
@@ -209,6 +209,7 @@
                 foundationChild.classList.add('foundation-suit');
                 adjustCardChildElementStyles(foundationChild, suit.rgbColor);
                 adjustCardElementStyles(foundationElement, suit.rgbColor);
+                foundationElement.style.backgroundColor = 'transparent';
                 foundationChild.innerHTML = suit.unicodeSymbol;
                 
                 foundationElement.appendChild(foundationChild);
@@ -274,7 +275,7 @@
                 redrawPlayingFieldElements(game);
                 menuElements.pauseButton.onclick = game.pause;
                 menuElements.redoButton.onclick = game.redoMove;
-                menuElements.autoMove.onclick = game.autoMove;
+                menuElements.autoMoveButton.onclick = game.autoMove;
                 menuElements.undoButton.onclick = game.undoMove;
                 menuElements.newGameButton.onclick = window.freeCell.main.startNewGame;
                 menuElements.replayGameButton.onclick = game.replay;
@@ -292,6 +293,9 @@
         },
         toggleUndoButtonDisabled: function dom_toggleRedoButtonDisabled(isDisabled) {
             toggleButtonDisabled(menuElements.undoButton, isDisabled);
+        },
+        toggleAutoMoveButtonDisabled: function dom_toggleAutoMoveButtonDisabled(isDisabled) {
+            toggleButtonDisabled(menuElements.autoMoveButton, isDisabled);
         },
         updateCascadeElement: function dom_updateCascadeElement(game, index, startingIndex, cascadeCardsInPlay) {
             var i,
