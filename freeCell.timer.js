@@ -40,7 +40,8 @@
             };
         
         timer.pause = function Timer_pause() {
-            isPaused = true;
+            isPaused = !isPaused;
+            window.freeCell.dom.togglePauseButtonText(isPaused);
         };
         
         timer.stopTimer = function Timer_stopTimer(maintainTime) {

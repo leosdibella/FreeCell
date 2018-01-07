@@ -255,6 +255,10 @@
         setGameTimer: function dom_setGameTimer(time) {
             menuElements.gameTimer.innerHTML = time;
         },
+        togglePauseButtonText: function dom_togglePauseButtonText(isPaused) {
+            menuElements.pauseButton.innerHTML = isPaused ? 'Resume' : 'Pause';
+            menuElements.gameTimer.style.color = isPaused ? '#dd0000' : '#ffffff';
+        },
         toggleRedoButtonDisabled: function dom_toggleRedoButtonDisabled(isDisabled) {
             toggleButtonDisabled(menuElements.redoButton, isDisabled);
         },
