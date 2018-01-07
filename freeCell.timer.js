@@ -50,11 +50,17 @@
         };
         
         timer.stopTimer = function Timer_stopTimer(maintainTime) {
+            timer.resume();
             clearTimeout(timeout);
             
             if (!maintainTime) {
                 window.freeCell.dom.setGameTimer('00:00:00');
             }
+        };
+        
+        timer.disablePausing = function Timer_disablePausing(isDisabled) {
+            timer.resume();
+            window.freeCell.dom.togglePauseButtonDisabled(isDisabled);
         };
         
         countTime();
