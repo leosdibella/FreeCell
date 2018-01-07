@@ -47,7 +47,8 @@
             replayGameButton: document.getElementById('replay-game-button'),
             undoButton: document.getElementById('undo-move-button'),
             gameTimer: document.getElementById('game-timer'),
-            configure: document.getElementById('configure-button')
+            configure: document.getElementById('configure-button'),
+            autoMove: document.getElementById('auto-move-button')
         },
         playingFieldElements = {
             freeCells: {
