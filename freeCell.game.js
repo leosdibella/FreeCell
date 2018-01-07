@@ -58,7 +58,7 @@
             },
             getNumberOfOpenSpaces = function Game_getNumberOfOpenSpaces() {
                 var i,
-                    numberOfOpenSpaces = 0;
+                    numberOfOpenSpaces = 1;
                 
                 for (i = 0; i < game.configuration.numberOfFreeCells; ++i) {
                     if (!game.freeCellCardsInPlay[i]) {
@@ -153,7 +153,7 @@
             },
             updatePlayingField = function Game_updatePlayingField() {
                 var currentMove = game.moves[game.moveIndex],
-                    move = game.moves[game.moveIndex - (currentMove.cascadeCardsInPlay === game.cascadeCardsInPlay ? 1 : 0)];
+                    move = game.moves[game.moveIndex - (currentMove.cascadeCardsInPlay === game.cascadeCardsInPlay ? 1 : 0)] || currentMove;
                 
                 updatePlayingFieldFreeCells(move);
                 updatePlayingFieldFoundations(move);
@@ -185,6 +185,28 @@
             },
             isSelectedCardLastInCascade = function Game_isSelectedCardLastInCascade() {
                 return game.selectedCardInPlay && game.cascadeCardsInPlay[game.selectedCardInPlay.cascadeIndex].length - 1 === game.selectedCardInPlay.cascadeChildIndex;
+            },
+            tryToGetValidCascade = function Game_tryToGetValidCascade(fromCascadeIndex, toCascadeIndex, startingIndex) {
+                var toCascadeLastInCascadeCard,
+                    numberOfOpenSpaces = getNumberOfOpenSpaces(),
+                    fromCascade = game.cascadeCardsInPlay[fromCascadeIndex],
+                    toCascade = game.cascadeCardsInPlay[toCascadeIndex],
+                    fromCascadeStaringCascadeCard = fromCascade[startingIndex];
+                
+                if (fromCascade.length - 1 - startingIndex > numberOfOpenSpaces) {
+                    return null;
+                }
+                
+                if (toCascade.length > 0) {
+                    toCascadeLastInCascadeCard = toCascade[toCascade.length - 1].card;
+                    
+                    if (toCascadeLastInCascadeCard.suit.rgbColor === fromCascadeStaringCascadeCard.suit.rgbColor
+                            || toCascadeLastInCascadeCard.value !== fromCascadeStaringCascadeCard.value + 1) {
+                        return null;
+                    }
+                }
+                
+                return new window.freeCell.CardInPlay(fromCascade, toCascade, startingIndex);
             },
             deal = function Game_deal(dontShuffle) {
                 var i,
@@ -285,7 +307,27 @@
             timer.resume();
             
             if (!timeout) {
-                var cascadeIndex = window.freeCell.dom.getPlayingFieldElementChildIdFromEvent(event);
+                var cascade,
+                    cascadeIndex = window.freeCell.dom.getPlayingFieldElementChildIdFromEvent(event);
+                
+                if (game.selectedCardInPlay) {
+                    game.selectedCardInPlay.isSelected = false;
+                    cascade = game.selectedCardInPlay.freeCellIndex === -1 ? tryToGetValidCascade(game.selectedCardInPlay.cascadeIndex, cascadeIndex, game.selectedCardInPlay.cascadeChildIndex) : -1;
+                    
+                    if (game.selectedCardInPlay.freeCellIndex > -1 || cascade) {
+                        game.cascadeCardsInPlay[cascadeIndex].push(game.selectedCardInPlay);
+                    
+                        if (game.selectedCardInPlay.freeCellIndex > -1) {
+                            game.freeCellCardsInPlay[game.selectedCardInPlay.freeCellIndex] = null;
+                        } else {
+                            cascade.action();
+                        }
+                        
+                        commitFreeCellGameMove();
+                    } else {
+                        unselectSelectedCard();
+                    }
+                }
             }
         };
         
