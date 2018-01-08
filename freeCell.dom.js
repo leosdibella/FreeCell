@@ -5,16 +5,31 @@
     
     var cascadeCardSpacingPixels = 215,
         attributeSplitter = '-',
-        alignClasses = {
-            left: 'align-left',
-            right: 'align-right'
+        htmlElementTags = {
+            div: 'div'
+        },
+        cssClasses = {
+            alignLeft: 'align-left',
+            alignRight: 'align-right',
+            cascadeEmpty: 'cascade-empty',
+            selectedCard: 'selected-card',
+            smallCardSuit: 'small-card-suit',
+            middleCardSuit: 'middle-card-suit',
+            suit: 'suit',
+            card: 'card',
+            foundationSuit: 'foundation-suit'
+        },
+        cssColors = {
+            transparent: 'transparent',
+            white: '#ffffff',
+            red: '#dd0000'
         },
         cardElementChildren = {
             topLeftCorner: {
                 childIndex: 0,
                 build: function dom_cardElementChildren_topLeftCorner_build(element, card) {
-                    element.classList.add('small-card-suit');
-                    element.classList.add(alignClasses.left);
+                    element.classList.add(cssClasses.smallCardSuit);
+                    element.classList.add(cssClasses.alignLeft);
                     element.innerHTML = card.valueAsString + card.suit.unicodeSymbol;
                 },
                 update: function dom_cardElementChildren_topLeftCorner_update(element, card) {
@@ -24,7 +39,7 @@
             middle: {
                 childIndex: 1,
                 build: function dom_cardElementChildren_middle_build(element, card) {
-                    element.classList.add('middle-card-suit');
+                    element.classList.add(cssClasses.middleCardSuit);
                     element.innerHTML = card.suit.unicodeSymbol;
                 },
                 update: function dom_cardElementChildren_middle_update(element, card) {
@@ -34,8 +49,8 @@
             bottomRightCorner: {
                 childIndex: 2,
                 build: function dom_cardElementChildrenbottomRightCorner_build(element, card) {
-                    element.classList.add('small-card-suit');
-                    element.classList.add(alignClasses.right);
+                    element.classList.add(cssClasses.smallCardSuit);
+                    element.classList.add(cssClasses.alignRight);
                     element.innerHTML = card.suit.unicodeSymbol + card.valueAsString;
                 },
                 update: function dom_cardElementChildrenbottomRightCorner_update(element, card) {
@@ -100,19 +115,19 @@
             element.style.boxShadow = generateBoxShadowStyleString(rgbColor);
         },
         generateCardChildElement = function dom_generateCardChildElement(card, cardElementChild) {
-            var element = document.createElement('div');
+            var element = document.createElement(htmlElementTags.div);
             
-            element.classList.add('suit');
+            element.classList.add(cssClasses.suit);
             adjustCardChildElementStyles(element, card.suit.rgbColor);
             cardElementChild.build(element, card);
             
             return element;
         },
         generateCascadeChildElement = function dom_generateCascadeChildElement(cardInPlay) {
-            var element = document.createElement('div');
+            var element = document.createElement(htmlElementTags.div);
             
             adjustCardElementStyles(element, cardInPlay.card.suit.rgbColor);
-            element.classList.add('card');
+            element.classList.add(cssClasses.card);
             
             element.appendChild(generateCardChildElement(cardInPlay.card, cardElementChildren.topLeftCorner));
             element.appendChild(generateCardChildElement(cardInPlay.card, cardElementChildren.middle));
@@ -134,7 +149,7 @@
             var key,
                 generatedElement;
             
-            element.style.backgroundColor = '#ffffff';
+            element.style.backgroundColor = cssColors.white;
             adjustCardElementStyles(element, cardInPlay.card.suit.rgbColor);
             
             for (key in cardElementChildren) {
@@ -172,7 +187,7 @@
             }
         },
         buildChild = function dom_buildChild(index, playingFieldElement) {
-            var element = document.createElement('div');
+            var element = document.createElement(htmlElementTags.div);
             
             element.classList.add(playingFieldElement.childClass);
             element.id = playingFieldElement.childIdPrefix + attributeSplitter + index;
@@ -197,16 +212,16 @@
                 
                 updateCardElement(cardInPlay, foundationElement);
             } else {
-                clearElementChildren(foundationElement);
-                
-                foundationChild = document.createElement('div');
-                foundationChild.classList.add('suit');
-                foundationChild.classList.add('foundation-suit');
-                adjustCardChildElementStyles(foundationChild, suit.rgbColor);
-                adjustCardElementStyles(foundationElement, suit.rgbColor);
-                foundationElement.style.backgroundColor = 'transparent';
+                foundationChild = document.createElement(htmlElementTags.div);
+                foundationChild.classList.add(cssClasses.suit);
+                foundationChild.classList.add(cssClasses.foundationSuit);
+                foundationElement.style.backgroundColor = cssColors.transparent;
                 foundationChild.innerHTML = suit.unicodeSymbol;
                 
+                adjustCardChildElementStyles(foundationChild, suit.rgbColor);
+                adjustCardElementStyles(foundationElement, suit.rgbColor);
+                
+                clearElementChildren(foundationElement);
                 foundationElement.appendChild(foundationChild);
             }
         },
@@ -283,9 +298,9 @@
             var cardElementClassList = playingFieldElements.cascades.children[cascadeIndex].childNodes[cascadeChildIndex].classList;
 
             if (isSelected) {
-                cardElementClassList.add('selected-card');
+                cardElementClassList.add(cssClasses.selectedCard);
             } else {
-                cardElementClassList.remove('selected-card');
+                cardElementClassList.remove(cssClasses.selectedCard);
             }
         },
         togglePauseButtonDisabled: function dom_togglePauseButtonDisabled(isDisabled) {
@@ -293,7 +308,7 @@
         },
         togglePauseButtonText: function dom_togglePauseButtonText(isPaused) {
             menuElements.pauseButton.innerHTML = isPaused ? 'Resume' : 'Pause';
-            menuElements.gameTimer.style.color = isPaused ? '#dd0000' : '#ffffff';
+            menuElements.gameTimer.style.color = isPaused ? cssColors.red : cssColors.white;
         },
         toggleRedoButtonDisabled: function dom_toggleRedoButtonDisabled(isDisabled) {
             toggleButtonDisabled(menuElements.redoButton, isDisabled);
@@ -321,9 +336,9 @@
             }
             
             if (cascadeElement.childNodes.length === 0) {
-                cascadeElement.classList.add('cascade-empty');
+                cascadeElement.classList.add(cssClasses.cascadeEmpty);
             } else {
-                cascadeElement.classList.remove('cascade-empty');
+                cascadeElement.classList.remove(cssClasses.cascadeEmpty);
             }
         },
         updateFoundationElement: updateFoundationElement,
@@ -334,7 +349,7 @@
                 updateCardElement(cardInPlay, freeCellElement);
             } else {
                 clearElementChildren(freeCellElement);
-                freeCellElement.style.backgroundColor = 'transparent';
+                freeCellElement.style.backgroundColor = cssColors.transparent;
             }
         }
     };

@@ -7,15 +7,12 @@
         var suit = this;
         
         suit.rgbColor = rgbColor || window.freeCell.defaults.rgbColors.black;
-        suit.unicodeSymbol = unicodeSymbol || '';
+        suit.unicodeSymbol = window.freeCell.utilities.isString(unicodeSymbol) ? unicodeSymbol : '';
         
         suit.isEqual = function Suit_isEqual(otherSuit) {
-            if (suit.unicodeSymbol === otherSuit.unicodeSymbol
-                    && suit.rgbColor.isEqual(otherSuit.rgbColor)) {
-                return true;
-            }
-            
-            return false;
+            return suit === otherSuit
+                || (suit.unicodeSymbol === otherSuit.unicodeSymbol
+                        && suit.rgbColor.isEqual(otherSuit.rgbColor));
         };
     }
     

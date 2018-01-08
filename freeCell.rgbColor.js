@@ -12,13 +12,10 @@
         rgbColor.blue = window.freeCell.utilities.isNonNegativeInteger(blue) ? blue : 0;
         
         rgbColor.isEqual = function RgbColor_isEqual(otherRgbColor) {
-            if (rgbColor.red === otherRgbColor.red
-                    && rgbColor.blue === otherRgbColor.blue
-                    && rgbColor.green === otherRgbColor.green) {
-                return true;
-            }
-            
-            return false;
+            return rgbColor === otherRgbColor
+                || (rgbColor.red === otherRgbColor.red
+                        && rgbColor.blue === otherRgbColor.blue
+                        && rgbColor.green === otherRgbColor.green);
         };
     }
     
