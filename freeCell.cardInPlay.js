@@ -12,7 +12,6 @@
         cardInPlay.cascadeChildIndex = window.freeCell.utilities.isNonNegativeInteger(cascadeChildIndex) ? cascadeChildIndex : -1;
         cardInPlay.freeCellIndex = -1;
         cardInPlay.foundationIndex = -1;
-        cardInPlay.isSelected = false;
     }
     
     window.freeCell.CardInPlay = CardInPlay;

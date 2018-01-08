@@ -134,14 +134,8 @@
             var key,
                 generatedElement;
             
-            if (cardInPlay.isSelected) {
-                element.classList.add('selected-card');
-            } else {
-                element.classList.remove('selected-card');
-                adjustCardElementStyles(element, cardInPlay.card.suit.rgbColor);
-            }
-            
             element.style.backgroundColor = '#ffffff';
+            adjustCardElementStyles(element, cardInPlay.card.suit.rgbColor);
             
             for (key in cardElementChildren) {
                 if (cardElementChildren.hasOwnProperty(key)) {
@@ -284,6 +278,15 @@
         },
         setGameTimer: function dom_setGameTimer(time) {
             menuElements.gameTimer.innerHTML = time;
+        },
+        toggleSelectedCardElement: function dom_toggleSelectedCardElement(cascadeIndex, cascadeChildIndex, isSelected) {
+            var cardElementClassList = playingFieldElements.cascades.children[cascadeIndex].childNodes[cascadeChildIndex].classList;
+
+            if (isSelected) {
+                cardElementClassList.add('selected-card');
+            } else {
+                cardElementClassList.remove('selected-card');
+            }
         },
         togglePauseButtonDisabled: function dom_togglePauseButtonDisabled(isDisabled) {
             toggleButtonDisabled(menuElements.pauseButton, isDisabled);
