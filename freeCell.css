@@ -74,6 +74,17 @@ html {
     cursor: pointer;
 }
 
+.cascade-empty,
+.free-cell-empty {
+    border: 1px solid rgb(256, 256, 256);
+    box-shadow: none;
+}
+
+.foundation-empty,
+.free-cell-empty {
+    background-color: transparent;
+}
+
 #menu-buttons {
     padding: 10px 10px 0px 10px;
     width: auto;

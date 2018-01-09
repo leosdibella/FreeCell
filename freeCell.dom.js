@@ -12,12 +12,14 @@
             alignLeft: 'align-left',
             alignRight: 'align-right',
             cascadeEmpty: 'cascade-empty',
+            freeCellEmpty: 'free-cell-empty',
             selectedCard: 'selected-card',
             smallCardSuit: 'small-card-suit',
             middleCardSuit: 'middle-card-suit',
             suit: 'suit',
             card: 'card',
-            foundationSuit: 'foundation-suit'
+            foundationSuit: 'foundation-suit',
+            foundationEmpty: 'foundation-empty'
         },
         cssColors = {
             transparent: 'transparent',
@@ -210,18 +212,19 @@
                     clearElementChildren(foundationElement);
                 }
                 
+                foundationElement.classList.remove(cssClasses.foundationEmpty);
                 updateCardElement(cardInPlay, foundationElement);
             } else {
                 foundationChild = document.createElement(htmlElementTags.div);
                 foundationChild.classList.add(cssClasses.suit);
                 foundationChild.classList.add(cssClasses.foundationSuit);
-                foundationElement.style.backgroundColor = cssColors.transparent;
                 foundationChild.innerHTML = suit.unicodeSymbol;
                 
                 adjustCardChildElementStyles(foundationChild, suit.rgbColor);
                 adjustCardElementStyles(foundationElement, suit.rgbColor);
                 
                 clearElementChildren(foundationElement);
+                foundationElement.classList.add(cssClasses.foundationEmpty);
                 foundationElement.appendChild(foundationChild);
             }
         },
@@ -349,10 +352,11 @@
             var freeCellElement = playingFieldElements.freeCells.children[index];
             
             if (cardInPlay) {
+                freeCellElement.classList.remove(cssClasses.freeCellEmpty);
                 updateCardElement(cardInPlay, freeCellElement);
             } else {
                 clearElementChildren(freeCellElement);
-                freeCellElement.style.backgroundColor = cssColors.transparent;
+                freeCellElement.classList.add(cssClasses.freeCellEmpty);
             }
         }
     };
