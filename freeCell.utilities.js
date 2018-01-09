@@ -10,9 +10,6 @@
         current: {},
         defaults: {},
         utilities: {
-            parseInt: function utilities_parseInt(value) {
-                return Number.parseInt(value, 10);
-            },
             isNonNegativeInteger: function utilities_isNonNegativeInteger(value) {
                 return Number.isInteger(value) && value > -1;
             },

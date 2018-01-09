@@ -6,7 +6,6 @@ body {
 }
 
 html {
-    background-color: rgb(20, 190, 200);
     overflow: auto;
 }
 
@@ -84,7 +83,7 @@ html {
 #menu-buttons > button {
     border: 0px;
     font-size: 16px;
-    background-color: #3d3d3d;
+    background-color: #000000;
     color: #ffffff;
     padding: 5px 10px;
     border-radius: 5px;
@@ -92,9 +91,9 @@ html {
     margin: 0px 5px;
 }
 
-#menu-buttons > button:active,
-#menu-buttons > button:focus,
-#menu-buttons > button:target {
+button:active,
+button:focus,
+button:target {
     outline: none;
 }
 
@@ -133,18 +132,7 @@ html {
 }
 
 .selected-card {
-    background: repeating-linear-gradient( 125deg, #ffffff, #ffffff 10px, #bbbbbb 10px, #bbbbbb 20px ) !important;
-}
-
-.selected-card > .small-card-suit {
-    font-size: 45px !important;
-    height: 50px;
-}
-
-.selected-card > .middle-card-suit {
-    font-size: 100px;
-    margin: 20px auto;
-    height: 110px;
+    background: repeating-linear-gradient( 125deg, #ffffff, #ffffff 10px, rgb(236, 66, 56) 10px, rgb(236, 66, 56) 20px ) !important;
 }
 
 #redo-move-button,
@@ -161,5 +149,59 @@ html {
 
 #game-timer {
     margin-left: -45px;
+}
+
+#game-timer,
+#move-counter-container {
+    color: #ffffff;
     font-size: 20px;
+}
+
+#overlay {
+    display: none;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(0, 0, 0, .5);
+    z-index: 100;
+    flex-direction: column;
+    justify-content: center;
+}
+
+#overlay-content {
+    border-radius: 5px;
+    background-color: #ffffff;
+    width: 80vw;
+    height: 80vh;
+    margin: auto;
+}
+
+#overlay-content-header-close-button {
+    background-color: transparent;
+    border: none;
+    font-size: 30px;
+    float: right;
+    padding: 8px 16px;
+    cursor: pointer;
+}
+
+#overlay-content-header {
+    overflow: hidden;
+    border-bottom: 1px solid #000000;
+}
+
+.overlay-content-header-tab-button {
+    float: left;
+    display: inline-block;
+    padding: 12px;
+    font-size: 24px;
+    color: rgb(20, 190, 200);
+    background-color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.overlay-content-header-tab-selected {
+    color: rgb(236, 66, 56);
 }

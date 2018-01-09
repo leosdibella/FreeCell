@@ -170,6 +170,7 @@
                 
                 updatePlayingField();
                 game.moveIndex = moveIndex;
+                window.freeCell.dom.setMoveCounter(game.moveIndex);
                 setAutoMoveCardInPlay();
                 toggleButtonsDisabled();
             },
@@ -181,6 +182,7 @@
                 game.moves.push(new window.freeCell.Move(game.move.freeCellCardsInPlay, game.move.foundationCardsInPlay, game.move.cascadeCardsInPlay));
                 updatePlayingField();
                 game.moveIndex = game.moves.length - 1;
+                window.freeCell.dom.setMoveCounter(game.moveIndex);
                 setAutoMoveCardInPlay();
                 toggleButtonsDisabled();
             },
@@ -213,21 +215,10 @@
                 
                 return new window.freeCell.Cascade(fromCascade, toCascade, startingIndex);
             },
-            attemptToCascadeSelectedCardChain = function Game_attemptToCascadeSelectedCardChain(cascadeIndex) {
-                var cascade = game.selectedCardInPlay.freeCellIndex === -1 ? tryToGetValidCascade(game.selectedCardInPlay.cascadeIndex, cascadeIndex, game.selectedCardInPlay.cascadeChildIndex) : -1;
-                    
-                if (game.selectedCardInPlay.freeCellIndex > -1 || cascade) {
-                    if (game.selectedCardInPlay.freeCellIndex > -1) {
-                        game.move.cascadeCardsInPlay[cascadeIndex].push(game.selectedCardInPlay);
-                        game.move.freeCellCardsInPlay[game.selectedCardInPlay.freeCellIndex] = null;
-                    } else {
-                        cascade.action();
-                    }
-                    
-                    commitFreeCellGameMove();
-                } else {
-                    unselectSelectedCard();
-                }
+            changeSelectedCardInPlay = function Game_changeSelectedCardInPlay(cardInPlay) {
+                updatePlayingFieldSelectedCard(false);
+                game.selectedCardInPlay = cardInPlay;
+                updatePlayingFieldSelectedCard(true);
             },
             getBottomMostValidCascadeCardInPlay = function Game_getBottomMostValidCascadeCardInPlay(cascadeCardInPlay) {
                 var i,
@@ -247,6 +238,29 @@
                 }
                 
                 return bottomMostValidCascadeCardInPlay;
+            },
+            attemptToCascadeSelectedCardChain = function Game_attemptToCascadeSelectedCardChain(cascadeIndex) {
+                var bottomMostValidCascadeCardInPlay,
+                    cascade = game.selectedCardInPlay.freeCellIndex === -1 ? tryToGetValidCascade(game.selectedCardInPlay.cascadeIndex, cascadeIndex, game.selectedCardInPlay.cascadeChildIndex) : -1;
+                    
+                if (game.selectedCardInPlay.freeCellIndex > -1 || cascade) {
+                    if (game.selectedCardInPlay.freeCellIndex > -1) {
+                        game.move.cascadeCardsInPlay[cascadeIndex].push(game.selectedCardInPlay);
+                        game.move.freeCellCardsInPlay[game.selectedCardInPlay.freeCellIndex] = null;
+                    } else {
+                        cascade.action();
+                    }
+                    
+                    commitFreeCellGameMove();
+                } else {
+                    bottomMostValidCascadeCardInPlay = game.move.cascadeCardsInPlay[cascadeIndex].length > 0 ? getBottomMostValidCascadeCardInPlay(game.move.cascadeCardsInPlay[cascadeIndex][game.move.cascadeCardsInPlay[cascadeIndex].length - 1]) : null;
+                    
+                    if (bottomMostValidCascadeCardInPlay) {
+                        changeSelectedCardInPlay(bottomMostValidCascadeCardInPlay);
+                    } else {
+                        unselectSelectedCard();
+                    }
+                }
             },
             deal = function Game_deal(dontShuffle) {
                 var i,
@@ -373,9 +387,7 @@
                 
                 if (game.move.freeCellCardsInPlay[freeCellIndex]) {
                     if (game.move.freeCellCardsInPlay[freeCellIndex] !== game.selectedCardInPlay) {
-                        updatePlayingFieldSelectedCard(false);
-                        game.selectedCardInPlay = game.move.freeCellCardsInPlay[freeCellIndex];
-                        updatePlayingFieldSelectedCard(true);
+                        changeSelectedCardInPlay(game.move.freeCellCardsInPlay[freeCellIndex]);
                     } else {
                         unselectSelectedCard();
                     }

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en"
+      id="application">
     <head>
         <title>
 			FreeCell
@@ -8,6 +9,26 @@
               href="freeCell.css">
     </head>
     <body>
+        <div id="overlay">
+            <div id="overlay-content">
+                <div id="overlay-content-header">
+                    <button class="overlay-content-header-tab-button">
+                        Game Settings
+                    </button>
+                    <button class="overlay-content-header-tab-button">
+                        Deck Settings
+                    </button>
+                    <button class="overlay-content-header-tab-button">
+                        Color Settings
+                    </button>
+                    <button id="overlay-content-header-close-button">
+                        X
+                    </button>
+                </div>
+                <div id="overlay-content-body">
+                </div>
+            </div>
+        </div>
         <div id="playing-field">
             <div id="menu-buttons">
                 <button id="new-game-button">
@@ -25,6 +46,12 @@
                 <button id="pause-game-button">
                     Pause
                 </button>
+                <span id="move-counter-container">
+                    Move # 
+                    <span id="move-counter">
+                        --
+                    </span>
+                </span>
                 <button id="auto-move-button">
                     Auto Move
                 </button>

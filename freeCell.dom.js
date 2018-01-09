@@ -58,6 +58,12 @@
                 }
             }
         },
+        applicationElements = {
+            application: document.getElementById('application'),
+            overlay: document.getElementById('overlay'),
+            overlayContentBody: document.getElementById('overlay-content-body'),
+            overlayContentHeaderCloseButton: document.getElementById('overlay-content-header-close-button')
+        },
         menuElements = {
             newGameButton: document.getElementById('new-game-button'),
             pauseButton: document.getElementById('pause-game-button'),
@@ -66,7 +72,8 @@
             undoButton: document.getElementById('undo-move-button'),
             gameTimer: document.getElementById('game-timer'),
             configureButton: document.getElementById('configure-button'),
-            autoMoveButton: document.getElementById('auto-move-button')
+            autoMoveButton: document.getElementById('auto-move-button'),
+            moveCounter: document.getElementById('move-counter')
         },
         playingFieldElements = {
             freeCells: {
@@ -91,16 +98,20 @@
                 numberOfChildren: 0
             }
         },
-        generateColorStyleString = function dom_generateColorStyleString(rgbColor, alpha) {
-            var alphaValue = alpha ? Math.max(Math.abs(alpha), 1) : 0;
-                
-            return 'rgb' + (alphaValue > 0 ? 'a' : '') + '(' + rgbColor.red + ',' + rgbColor.green + ',' + rgbColor.blue + (alphaValue > 0 ? ',' + alphaValue : '') + ')';
+        generateBackgroundStyleString = function dom_generateBackgroundStyleString(primaryRgbColor, secondaryRgbColor) {
+            var primaryHexColorString = primaryRgbColor ? primaryRgbColor.toHexColorString() : window.freeCell.defaults.colorScheme.selectedBackground.toHexColorString(),
+                secondaryHexColorString = secondaryRgbColor ? secondaryRgbColor.toHexColorString() : cssColors.white;
+            
+            return 'repeating-linear-gradient( 125deg, '
+                + secondaryHexColorString + ', ' +  secondaryHexColorString
+                + ' 10px, ' + primaryHexColorString + ' 10px, ' + primaryHexColorString
+                + ' 20px ) !important';
         },
         generateBorderStyleString = function dom_generateBorderStyleString(rgbColor) {
-            return '1px solid ' + generateColorStyleString(rgbColor);
+            return '1px solid ' + rgbColor.toString();
         },
         generateBoxShadowStyleString = function dom_generateBoxShadowStyleString(rgbColor) {
-            return '0px 0px 10px 1px ' + generateColorStyleString(rgbColor, 1);
+            return '0px 0px 10px 1px ' + rgbColor.toString(1);
         },
         clearElementChildren = function dom_clearElementChildren(element) {
             while (element.firstChild) {
@@ -116,7 +127,7 @@
             }
         },
         adjustCardChildElementStyles = function dom_adjustCardChildElementStyles(element, rgbColor) {
-            element.style.color = generateColorStyleString(rgbColor);
+            element.style.color = rgbColor.toString();
         },
         adjustCardElementStyles = function dom_adjustCardElementStyles(element, rgbColor) {
             element.style.border = generateBorderStyleString(rgbColor);
@@ -271,7 +282,17 @@
             }
         },
         openConfigurationOverlay = function dom_openConfigurationOverlay() {
+            if (window.freeCell.current.game) {
+                window.freeCell.current.game.pause();
+            }
             
+            applicationElements.application.scrollTop = '0px';
+            applicationElements.application.style.overflow = 'hidden';
+            applicationElements.overlay.style.display = 'flex';
+        },
+        closeConfigurationOverlay = function dom_closeConfigurationOverlay() {
+            applicationElements.application.style.overflow = '';
+            applicationElements.overlay.style.display = '';
         },
         toggleSelectedElement = function dom_toggleSelectedElement(element, isSelected) {
             if (element) {
@@ -284,18 +305,19 @@
         };
     
     menuElements.configureButton.onclick = openConfigurationOverlay;
+    applicationElements.overlayContentHeaderCloseButton.onclick = closeConfigurationOverlay;
     
     window.freeCell.dom = {
         getCascadeChildElementIndicesFromEvent: function dom_getCascadeChildElementIndicesFromEvent(event) {
             var idParts = event.currentTarget.id.split(attributeSplitter);
             
             return [
-                window.freeCell.utilities.parseInt(idParts[0]),
-                window.freeCell.utilities.parseInt(idParts[1])
+                Number.parseInt(idParts[0], 10),
+                Number.parseInt(idParts[1], 10)
             ];
         },
         getPlayingFieldElementChildIdFromEvent: function dom_getPlayingFieldElementChildIdFromEvent(event) {
-            return window.freeCell.utilities.parseInt(event.currentTarget.id.split(attributeSplitter)[1]);
+            return Number.parseInt(event.currentTarget.id.split(attributeSplitter)[1], 10);
         },
         linkGameToDom: function dom_linkGameToDom(game) {
             if (game) {
@@ -310,6 +332,9 @@
         },
         setGameTimer: function dom_setGameTimer(time) {
             menuElements.gameTimer.innerHTML = time;
+        },
+        setMoveCounter: function dom_setMoveCounter(value) {
+            menuElements.moveCounter.innerHTML = window.freeCell.utilities.isNonNegativeInteger(value) ? value : '--';
         },
         toggleSelectedCardElement: function dom_toggleSelectedCardElement(cardInPlay, isSelected) {
             var element,
@@ -329,7 +354,7 @@
         },
         togglePauseButtonText: function dom_togglePauseButtonText(isPaused) {
             menuElements.pauseButton.innerHTML = isPaused ? 'Resume' : 'Pause';
-            menuElements.gameTimer.style.color = isPaused ? cssColors.red : cssColors.white;
+            menuElements.gameTimer.style.color = isPaused ? window.freeCell.defaults.colorScheme.selectedBackground : cssColors.white;
         },
         toggleRedoButtonDisabled: function dom_toggleRedoButtonDisabled(isDisabled) {
             toggleButtonDisabled(menuElements.redoButton, isDisabled);
