@@ -372,12 +372,11 @@
                 
                 if (game.move.freeCellCardsInPlay[freeCellIndex]) {
                     if (game.move.freeCellCardsInPlay[freeCellIndex] !== game.selectedCardInPlay) {
-                        if (game.selectedCardInPlay) {
-                            updatePlayingFieldSelectedCard(false);
-                        }
-                    
+                        updatePlayingFieldSelectedCard(false);
                         game.selectedCardInPlay = game.move.freeCellCardsInPlay[freeCellIndex];
                         updatePlayingFieldSelectedCard(true);
+                    } else {
+                        unselectSelectedCard();
                     }
                 } else if (game.selectedCardInPlay) {
                     lastInCascade = isSelectedCardLastInCascade();
