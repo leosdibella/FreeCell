@@ -295,12 +295,15 @@
             menuElements.gameTimer.innerHTML = time;
         },
         toggleSelectedCardElement: function dom_toggleSelectedCardElement(cascadeIndex, cascadeChildIndex, isSelected) {
-            var cardElementClassList = playingFieldElements.cascades.children[cascadeIndex].childNodes[cascadeChildIndex].classList;
+            var cascadeElement = playingFieldElements.cascades.children[cascadeIndex],
+                cascadeCardElement = cascadeElement ? cascadeElement.childNodes[cascadeChildIndex] : null;
 
-            if (isSelected) {
-                cardElementClassList.add(cssClasses.selectedCard);
-            } else {
-                cardElementClassList.remove(cssClasses.selectedCard);
+            if (cascadeCardElement) {
+                if (isSelected) {
+                    cascadeCardElement.classList.add(cssClasses.selectedCard);
+                } else {
+                    cascadeCardElement.classList.remove(cssClasses.selectedCard);
+                }
             }
         },
         togglePauseButtonDisabled: function dom_togglePauseButtonDisabled(isDisabled) {

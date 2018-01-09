@@ -132,15 +132,18 @@ html {
 }
 
 .selected-card {
-    border: 1px solid rgb(255, 105, 180);
-    -webkit-box-shadow: 0px 0px 10px 1px rgba(255, 105, 180, 1);
-    -moz-box-shadow: 0px 0px 10px 1px rgba(255, 105, 180, 1);
-    box-shadow: 0px 0px 10px 1px rgba(255, 105, 180, 1);
-    background-color: rgb(128, 0, 128);
+    background: repeating-linear-gradient( 125deg, #ffffff, #ffffff 10px, #bbbbbb 10px, #bbbbbb 20px ) !important;
 }
 
-.selected-card > div {
-    color: rgb(255, 105, 180);
+.selected-card > .small-card-suit {
+    font-size: 45px !important;
+    height: 50px;
+}
+
+.selected-card > .middle-card-suit {
+    font-size: 100px;
+    margin: 20px auto;
+    height: 110px;
 }
 
 #redo-move-button,
