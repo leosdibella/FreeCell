@@ -14,7 +14,7 @@
         cascade.action = function Cascade_action() {
             var i;
             
-            for (i = cascade.startingIndex; i < cascade.fromCascade.length - 1; ++i) {
+            for (i = cascade.startingIndex; i < cascade.fromCascade.length; ++i) {
                 cascade.toCascade.push(cascade.fromCascade[i]);
                 cascade.fromCascade.splice(i, 1);
             }

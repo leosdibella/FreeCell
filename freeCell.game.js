@@ -211,7 +211,23 @@
                     }
                 }
                 
-                return new window.freeCell.CardInPlay(fromCascade, toCascade, startingIndex);
+                return new window.freeCell.Cascade(fromCascade, toCascade, startingIndex);
+            },
+            attemptToCascadeSelectedCardChain = function Game_attemptToCascadeSelectedCardChain(cascadeIndex) {
+                var cascade = game.selectedCardInPlay.freeCellIndex === -1 ? tryToGetValidCascade(game.selectedCardInPlay.cascadeIndex, cascadeIndex, game.selectedCardInPlay.cascadeChildIndex) : -1;
+                    
+                if (game.selectedCardInPlay.freeCellIndex > -1 || cascade) {
+                    if (game.selectedCardInPlay.freeCellIndex > -1) {
+                        game.move.cascadeCardsInPlay[cascadeIndex].push(game.selectedCardInPlay);
+                        game.move.freeCellCardsInPlay[game.selectedCardInPlay.freeCellIndex] = null;
+                    } else {
+                        cascade.action();
+                    }
+                    
+                    commitFreeCellGameMove();
+                } else {
+                    unselectSelectedCard();
+                }
             },
             getBottomMostValidCascadeCardInPlay = function Game_getBottomMostValidCascadeCardInPlay(cascadeCardInPlay) {
                 var i,
@@ -321,25 +337,8 @@
             timer.resume();
             
             if (!timeout) {
-                var cascade,
-                    cascadeIndex = window.freeCell.dom.getPlayingFieldElementChildIdFromEvent(event);
-                
                 if (game.selectedCardInPlay) {
-                    cascade = game.selectedCardInPlay.freeCellIndex === -1 ? tryToGetValidCascade(game.selectedCardInPlay.cascadeIndex, cascadeIndex, game.selectedCardInPlay.cascadeChildIndex) : -1;
-                    
-                    if (game.selectedCardInPlay.freeCellIndex > -1 || cascade) {
-                        game.move.cascadeCardsInPlay[cascadeIndex].push(game.selectedCardInPlay);
-                    
-                        if (game.selectedCardInPlay.freeCellIndex > -1) {
-                            game.move.freeCellCardsInPlay[game.selectedCardInPlay.freeCellIndex] = null;
-                        } else {
-                            cascade.action();
-                        }
-                        
-                        commitFreeCellGameMove();
-                    } else {
-                        unselectSelectedCard();
-                    }
+                    attemptToCascadeSelectedCardChain(window.freeCell.dom.getPlayingFieldElementChildIdFromEvent(event));
                 }
             }
         };
@@ -358,6 +357,8 @@
                     updatePlayingFieldSelectedCard(true);
                 } else if (game.selectedCardInPlay === cascadeCardInPlay) {
                     unselectSelectedCard();
+                } else {
+                    attemptToCascadeSelectedCardChain(cascadeCardInPlay.cascadeIndex);
                 }
             }
         };
