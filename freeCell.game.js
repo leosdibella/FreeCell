@@ -189,6 +189,9 @@
                     && game.selectedCardInPlay.cascadeIndex > -1
                     && game.move.cascadeCardsInPlay[game.selectedCardInPlay.cascadeIndex].length - 1 === game.selectedCardInPlay.cascadeChildIndex;
             },
+            isValidCascadeChain = function Game_isValidCascadeChain(bottomCard, topCard) {
+                return bottomCard.suit.rgbColor !== topCard.suit.rgbColor && bottomCard.value === topCard.value + 1;
+            },
             tryToGetValidCascade = function Game_tryToGetValidCascade(fromCascadeIndex, toCascadeIndex, startingIndex) {
                 var toCascadeLastInCascadeCard,
                     numberOfOpenSpaces = getNumberOfOpenSpaces(),
@@ -203,13 +206,31 @@
                 if (toCascade.length > 0) {
                     toCascadeLastInCascadeCard = toCascade[toCascade.length - 1].card;
                     
-                    if (toCascadeLastInCascadeCard.suit.rgbColor === fromCascadeStaringCascadeCard.suit.rgbColor
-                            || toCascadeLastInCascadeCard.value !== fromCascadeStaringCascadeCard.value + 1) {
+                    if (!isValidCascadeChain(toCascadeLastInCascadeCard, fromCascadeStaringCascadeCard)) {
                         return null;
                     }
                 }
                 
                 return new window.freeCell.CardInPlay(fromCascade, toCascade, startingIndex);
+            },
+            getBottomMostValidCascadeCardInPlay = function Game_getBottomMostValidCascadeCardInPlay(cascadeCardInPlay) {
+                var i,
+                    chainLength = 1,
+                    numberOfOpenSpaces = getNumberOfOpenSpaces(),
+                    cascade = game.move.cascadeCardsInPlay[cascadeCardInPlay.cascadeIndex],
+                    bottomMostValidCascadeCardInPlay = cascade[cascade.length - 1];
+                
+                for (i = cascade.length - 2; i >= cascadeCardInPlay.cascadeChildIndex; --i) {
+                    if (chainLength <= numberOfOpenSpaces
+                            && isValidCascadeChain(cascade[i].card, bottomMostValidCascadeCardInPlay.card)) {
+                        bottomMostValidCascadeCardInPlay = cascade[i];
+                        ++chainLength;
+                    } else {
+                        break;
+                    }
+                }
+                
+                return bottomMostValidCascadeCardInPlay;
             },
             deal = function Game_deal(dontShuffle) {
                 var i,
@@ -332,6 +353,7 @@
                     cascadeCardInPlay = game.move.cascadeCardsInPlay[cascadeCardIndices[0]][cascadeCardIndices[1]];
                 
                 if (!game.selectedCardInPlay) {
+                    cascadeCardInPlay = getBottomMostValidCascadeCardInPlay(cascadeCardInPlay);
                     game.selectedCardInPlay = cascadeCardInPlay;
                     updatePlayingFieldSelectedCard(true);
                 } else if (game.selectedCardInPlay === cascadeCardInPlay) {
