@@ -160,10 +160,10 @@
             updatePlayingField = function Game_updatePlayingField() {
                 var move = game.moves[game.moveIndex];
                 
+                unselectSelectedCard();
                 updatePlayingFieldFreeCells(move);
                 updatePlayingFieldFoundations(move);
                 updatePlayingFieldCascades(move);
-                unselectSelectedCard();
             },
             returnToFreeCellGameMove = function Game_returnToFreeCellGameMove(moveIndex) {
                 game.move = game.moves[moveIndex].copy();
