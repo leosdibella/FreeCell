@@ -25,6 +25,16 @@
             isString: isString,
             isNonEmptyString: function utilities_isNonEmptyString(value) {
                 return isString(value) ? value.length > 0 : false;
+            },
+            fillArray: function utilities_fillArray(length, value) {
+                var i,
+                    array = [];
+                
+                for (i = 0; i < length; ++i) {
+                    array.push(value !== undefined ? value : []);
+                }
+                
+                return array;
             }
         }
     };

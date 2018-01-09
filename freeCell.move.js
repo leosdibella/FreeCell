@@ -32,6 +32,10 @@
                 move.cascadeCardsInPlay[i].push(cascadeCardsInPlay[i][j]);
             }
         }
+        
+        move.copy = function Move_copy() {
+            return new Move(move.freeCellCardsInPlay, move.foundationCardsInPlay, move.cascadeCardsInPlay);
+        };
     }
     
     window.freeCell.Move = Move;

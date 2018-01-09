@@ -12,14 +12,12 @@
             alignLeft: 'align-left',
             alignRight: 'align-right',
             cascadeEmpty: 'cascade-empty',
-            freeCellEmpty: 'free-cell-empty',
             selectedCard: 'selected-card',
             smallCardSuit: 'small-card-suit',
             middleCardSuit: 'middle-card-suit',
             suit: 'suit',
             card: 'card',
-            foundationSuit: 'foundation-suit',
-            foundationEmpty: 'foundation-empty'
+            foundationSuit: 'foundation-suit'
         },
         cssColors = {
             transparent: 'transparent',
@@ -109,6 +107,14 @@
                 element.removeChild(element.firstChild);
             }
         },
+        removeElementStyles = function dom_removeElementStyles(element, keepBorderStyles) {
+            element.style.backgroundColor = cssColors.transparent;
+            
+            if (!keepBorderStyles) {
+                element.style.border = '';
+                element.style.boxShadow = '';
+            }
+        },
         adjustCardChildElementStyles = function dom_adjustCardChildElementStyles(element, rgbColor) {
             element.style.color = generateColorStyleString(rgbColor);
         },
@@ -184,7 +190,7 @@
             
             for (i = 0; i < game.configuration.numberOfCascades; ++i) {
                 for (j = 0; j < game.configuration.cascadeDistribution[i]; ++j) {
-                    generateAndAppendCardToCascade(game.cascadeCardsInPlay[i][j], i, j, playingFieldElements.cascades.children[i], game);
+                    generateAndAppendCardToCascade(game.move.cascadeCardsInPlay[i][j], i, j, playingFieldElements.cascades.children[i], game);
                 }
             }
         },
@@ -212,7 +218,6 @@
                     clearElementChildren(foundationElement);
                 }
                 
-                foundationElement.classList.remove(cssClasses.foundationEmpty);
                 updateCardElement(cardInPlay, foundationElement);
             } else {
                 foundationChild = document.createElement(htmlElementTags.div);
@@ -224,7 +229,7 @@
                 adjustCardElementStyles(foundationElement, suit.rgbColor);
                 
                 clearElementChildren(foundationElement);
-                foundationElement.classList.add(cssClasses.foundationEmpty);
+                removeElementStyles(foundationElement, true);
                 foundationElement.appendChild(foundationChild);
             }
         },
@@ -267,6 +272,15 @@
         },
         openConfigurationOverlay = function dom_openConfigurationOverlay() {
             
+        },
+        toggleSelectedElement = function dom_toggleSelectedElement(element, isSelected) {
+            if (element) {
+                if (isSelected) {
+                    element.classList.add(cssClasses.selectedCard);
+                } else {
+                    element.classList.remove(cssClasses.selectedCard);
+                }
+            }
         };
     
     menuElements.configureButton.onclick = openConfigurationOverlay;
@@ -297,17 +311,18 @@
         setGameTimer: function dom_setGameTimer(time) {
             menuElements.gameTimer.innerHTML = time;
         },
-        toggleSelectedCardElement: function dom_toggleSelectedCardElement(cascadeIndex, cascadeChildIndex, isSelected) {
-            var cascadeElement = playingFieldElements.cascades.children[cascadeIndex],
-                cascadeCardElement = cascadeElement ? cascadeElement.childNodes[cascadeChildIndex] : null;
-
-            if (cascadeCardElement) {
-                if (isSelected) {
-                    cascadeCardElement.classList.add(cssClasses.selectedCard);
-                } else {
-                    cascadeCardElement.classList.remove(cssClasses.selectedCard);
-                }
+        toggleSelectedCardElement: function dom_toggleSelectedCardElement(cardInPlay, isSelected) {
+            var element,
+                childElement;
+            
+            if (cardInPlay.freeCellIndex > -1) {
+                element = playingFieldElements.freeCells.children[cardInPlay.freeCellIndex];
+            } else {
+                element = playingFieldElements.cascades.children[cardInPlay.cascadeIndex];
+                childElement = element ? element.childNodes[cardInPlay.cascadeChildIndex] : null;
             }
+            
+            toggleSelectedElement(childElement || element, isSelected);
         },
         togglePauseButtonDisabled: function dom_togglePauseButtonDisabled(isDisabled) {
             toggleButtonDisabled(menuElements.pauseButton, isDisabled);
@@ -352,11 +367,10 @@
             var freeCellElement = playingFieldElements.freeCells.children[index];
             
             if (cardInPlay) {
-                freeCellElement.classList.remove(cssClasses.freeCellEmpty);
                 updateCardElement(cardInPlay, freeCellElement);
             } else {
                 clearElementChildren(freeCellElement);
-                freeCellElement.classList.add(cssClasses.freeCellEmpty);
+                removeElementStyles(freeCellElement);
             }
         }
     };
