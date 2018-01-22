@@ -76,11 +76,13 @@ html {
     width: 150px;
     height: 250px;
     position: relative;
-    display: inline-block;
     margin: 0px 5px;
     border: 1px solid rgb(256, 256, 256);
     cursor: pointer;
     background-color: transparent;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 #menu-buttons {
