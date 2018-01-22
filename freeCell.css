@@ -20,32 +20,41 @@ html {
 
 .small-card-suit {
     font-size: 30px;
-    height: 35px;
+    height: fit-content;
+    border-radius: 50%;
+    width: fit-content;
+    background-color: #ffffff;
+    padding: 2px 5px;
 }
 
-.card { 
+.card {
     border-radius: 5px;
     width: 150px;
     height: 250px;
     background-color: rgb(256, 256, 256);
     position: relative;
     cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .middle-card-suit {
     font-size: 60px;
-    height: 80px;
-    margin: 50px auto;
+    height: fit-content;
+    background-color: #ffffff;
+    width: fit-content;
+    margin: auto;
+    border-radius: 50%;
+    padding: 0px 10px;
 }
 
 .align-right {
-    text-align: right;
-    padding-right: 5px;
+  margin-left: auto;
 }
 
 .align-left {
-    text-align: left;
-    padding-left: 5px;
+  margin-right: auto;
 }
 
 #playing-field {
@@ -141,8 +150,8 @@ button:target {
     float: right;
 }
 
-#new-game-button, 
-#replay-game-button, 
+#new-game-button,
+#replay-game-button,
 #configure-button {
     float: left;
 }
