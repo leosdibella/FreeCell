@@ -4,6 +4,7 @@
     'use strict';
 
     var cascadeCardSpacingPixels = 215,
+        selectedOverlayTabIndex = 0,
         attributeSplitter = '-',
         htmlElementTags = {
             div: 'div'
@@ -17,7 +18,8 @@
             middleCardSuit: 'middle-card-suit',
             suit: 'suit',
             card: 'card',
-            foundationSuit: 'foundation-suit'
+            foundationSuit: 'foundation-suit',
+            selectedOverlayContentHeaderTabButton: 'selected-overlay-content-header-tab-button'
         },
         cssColors = {
             transparent: 'transparent',
@@ -62,7 +64,12 @@
             application: document.getElementById('application'),
             overlay: document.getElementById('overlay'),
             overlayContentBody: document.getElementById('overlay-content-body'),
-            overlayContentHeaderCloseButton: document.getElementById('overlay-content-header-close-button')
+            overlayContentHeaderCloseButton: document.getElementById('overlay-content-header-close-button'),
+            overlayTabs: [
+                document.getElementById('overlay-game-settings-button'),
+                document.getElementById('overlay-deck-settings-button'),
+                document.getElementById('overlay-color-settings-button')
+            ]
         },
         menuElements = {
             newGameButton: document.getElementById('new-game-button'),

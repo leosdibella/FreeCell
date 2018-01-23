@@ -52,7 +52,7 @@
             },
             getNumberOfOpenSpaces = function Game_getNumberOfOpenSpaces() {
                 var i,
-                    numberOfOpenSpaces = 1; // Note that the player can always move at least one card even if all FreeCells and Cascades are occupied
+                    numberOfOpenSpaces = 0;
 
                 for (i = 0; i < game.configuration.numberOfFreeCells; ++i) {
                     if (!game.move.freeCellCardsInPlay[i]) {
