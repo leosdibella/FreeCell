@@ -4,7 +4,6 @@
     'use strict';
 
     var cascadeCardSpacingPixels = 215,
-        selectedOverlayTabIndex = 0,
         attributeSplitter = '-',
         htmlElementTags = {
             div: 'div'
@@ -13,7 +12,6 @@
             alignLeft: 'align-left',
             alignRight: 'align-right',
             cascadeEmpty: 'cascade-empty',
-            selectedCard: 'selected-card',
             smallCardSuit: 'small-card-suit',
             middleCardSuit: 'middle-card-suit',
             suit: 'suit',
@@ -105,14 +103,13 @@
                 numberOfChildren: 0
             }
         },
-        generateBackgroundStyleString = function dom_generateBackgroundStyleString(primaryRgbColor, secondaryRgbColor) {
-            var primaryHexColorString = primaryRgbColor ? primaryRgbColor.toHexColorString() : window.freeCell.defaults.colorScheme.selectedBackground.toHexColorString(),
-                secondaryHexColorString = secondaryRgbColor ? secondaryRgbColor.toHexColorString() : cssColors.white;
+        generateSelectedCardBackgroundStyleString = function dom_generateSelectedCardBackgroundStyleString() {
+            var primaryRgbColorString = window.freeCell.current.configuration.colorScheme.secondaryRgbColor.toString();
 
             return 'repeating-linear-gradient( 125deg, '
-                + secondaryHexColorString + ', ' +  secondaryHexColorString
-                + ' 10px, ' + primaryHexColorString + ' 10px, ' + primaryHexColorString
-                + ' 20px ) !important';
+                + cssColors.white + ', ' +  cssColors.white
+                + ' 10px, ' + primaryRgbColorString + ' 10px, ' + primaryRgbColorString
+                + ' 20px )';
         },
         generateBorderStyleString = function dom_generateBorderStyleString(rgbColor) {
             return '1px solid ' + rgbColor.toString();
@@ -288,6 +285,32 @@
                 buttonElement.disabled = !!isDisabled;
             }
         },
+        styleOverlayButtons = function dom_styleOverlayButtons(selectedButtonIndex) {
+            var i;
+
+            for (i = 0; i < applicationElements.overlayTabs.length; ++i) {
+                if (i !== selectedButtonIndex) {
+                    applicationElements.overlayTabs[i].style.color = window.freeCell.current.configuration.colorScheme.primaryRgbColor.toString();
+                } else {
+                    applicationElements.overlayTabs[i].style.color = window.freeCell.current.configuration.colorScheme.secondaryRgbColor.toString();
+                }
+            }
+
+            clearElementChildren(applicationElements.overlayContentBody);
+        },
+        selectOverlayGameTab = function dom_selectOverlayGameTab() {
+            var fieldContainer = document.createElement('div');
+
+            styleOverlayButtons(0);
+
+            applicationElements.overlayContentBody.appendChild(fieldContainer);
+        },
+        selectOverlayDeckTab = function dom_selectOverlayDeckTab() {
+            styleOverlayButtons(1);
+        },
+        selectOverlayColorTab = function dom_selectOverlayColorTab() {
+            styleOverlayButtons(2);
+        },
         openConfigurationOverlay = function dom_openConfigurationOverlay() {
             if (window.freeCell.current.game) {
                 window.freeCell.current.game.pause();
@@ -296,6 +319,7 @@
             applicationElements.application.scrollTop = '0px';
             applicationElements.application.style.overflow = 'hidden';
             applicationElements.overlay.style.display = 'flex';
+            selectOverlayGameTab();
         },
         closeConfigurationOverlay = function dom_closeConfigurationOverlay() {
             applicationElements.application.style.overflow = '';
@@ -303,12 +327,13 @@
         },
         toggleSelectedElement = function dom_toggleSelectedElement(element, isSelected) {
             if (element) {
-                if (isSelected) {
-                    element.classList.add(cssClasses.selectedCard);
-                } else {
-                    element.classList.remove(cssClasses.selectedCard);
-                }
+                element.style.background = isSelected ? generateSelectedCardBackgroundStyleString() : null;
             }
+        },
+        bindOverlayElements = function dom_bindOverlayElements() {
+            applicationElements.overlayTabs[0].onclick = selectOverlayGameTab;
+            applicationElements.overlayTabs[1].onclick = selectOverlayDeckTab;
+            applicationElements.overlayTabs[2].onclick = selectOverlayColorTab;
         };
 
     menuElements.configureButton.onclick = openConfigurationOverlay;
@@ -361,7 +386,7 @@
         },
         togglePauseButtonText: function dom_togglePauseButtonText(isPaused) {
             menuElements.pauseButton.innerHTML = isPaused ? 'Resume' : 'Pause';
-            menuElements.gameTimer.style.color = isPaused ? window.freeCell.defaults.colorScheme.selectedBackground : cssColors.white;
+            menuElements.gameTimer.style.color = isPaused ? window.freeCell.current.configuration.colorScheme.secondaryRgbColor.toString() : cssColors.white;
         },
         toggleRedoButtonDisabled: function dom_toggleRedoButtonDisabled(isDisabled) {
             toggleButtonDisabled(menuElements.redoButton, isDisabled);
@@ -406,4 +431,6 @@
             }
         }
     };
+
+    bindOverlayElements();
 }());
