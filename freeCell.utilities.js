@@ -1,11 +1,11 @@
 /*global window*/
 (function () {
     'use strict';
-    
+
     var isString = function utilities_isString(value) {
-        return typeof value === 'string';
+        return typeof value === 'string' || value instanceof String;
     };
-    
+
     window.freeCell = {
         current: {},
         defaults: {},
@@ -26,11 +26,11 @@
             fillArray: function utilities_fillArray(length, value) {
                 var i,
                     array = [];
-                
+
                 for (i = 0; i < length; ++i) {
                     array.push(value !== undefined ? value : []);
                 }
-                
+
                 return array;
             }
         }

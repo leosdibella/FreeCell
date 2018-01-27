@@ -223,8 +223,7 @@
                     bottomMostValidCascadeCardInPlay = cascade[cascade.length - 1];
 
                 for (i = cascade.length - 2; i >= cascadeCardInPlay.cascadeChildIndex; --i) {
-                    if (chainLength <= numberOfOpenSpaces
-                            && isValidCascadeChain(cascade[i].card, bottomMostValidCascadeCardInPlay.card)) {
+                    if (chainLength <= numberOfOpenSpaces && isValidCascadeChain(cascade[i].card, bottomMostValidCascadeCardInPlay.card)) {
                         bottomMostValidCascadeCardInPlay = cascade[i];
                         ++chainLength;
                     } else {
@@ -251,13 +250,19 @@
 
                 if (game.selectedCardInPlay.freeCellIndex > -1 || cascade) {
                     if (game.selectedCardInPlay.freeCellIndex > -1) {
-                        game.move.cascadeCardsInPlay[cascadeIndex].push(game.selectedCardInPlay);
-                        game.move.freeCellCardsInPlay[game.selectedCardInPlay.freeCellIndex] = null;
+                        bottomMostValidCascadeCardInPlay = game.move.cascadeCardsInPlay[cascadeIndex].length > 0 ? game.move.cascadeCardsInPlay[cascadeIndex][game.move.cascadeCardsInPlay[cascadeIndex].length - 1] : null;
+
+                        if (bottomMostValidCascadeCardInPlay && isValidCascadeChain(bottomMostValidCascadeCardInPlay.card, game.selectedCardInPlay.card)) {
+                            game.move.cascadeCardsInPlay[cascadeIndex].push(game.selectedCardInPlay);
+                            game.move.freeCellCardsInPlay[game.selectedCardInPlay.freeCellIndex] = null;
+                            commitFreeCellGameMove();
+                        } else {
+                            unselectSelectedCard();
+                        }
                     } else {
                         cascade.action();
+                        commitFreeCellGameMove();
                     }
-
-                    commitFreeCellGameMove();
                 } else {
                     bottomMostValidCascadeCardInPlay = game.move.cascadeCardsInPlay[cascadeIndex].length > 0 ? getBottomMostValidCascadeCardInPlay(game.move.cascadeCardsInPlay[cascadeIndex][game.move.cascadeCardsInPlay[cascadeIndex].length - 1]) : null;
 
@@ -297,8 +302,8 @@
                 game.moveIndex = 0;
 
                 game.move = new window.freeCell.Move(window.freeCell.utilities.fillArray(game.configuration.numberOfFreeCells, null),
-                                                     window.freeCell.utilities.fillArray(game.configuration.deck.numberOfSuits),
-                                                     deal(dontShuffle));
+                    window.freeCell.utilities.fillArray(game.configuration.deck.numberOfSuits),
+                    deal(dontShuffle));
 
                 commitFreeCellGameMove();
                 toggleButtonsDisabled();
