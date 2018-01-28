@@ -160,6 +160,30 @@
                 updatePlayingFieldFoundations(move);
                 updatePlayingFieldCascades(move);
             },
+            checkForWinCriteria = function Game_checkForWinCriteria() {
+                var i,
+                    hasWon = true;
+
+                for (i = 0; i < game.configuration.numberOfFreeCells; ++i) {
+                    if (game.move.freeCellCardsInPlay[i]) {
+                        hasWon = false;
+                    }
+                }
+
+                for (i = 0; i < game.configuration.numberOfCascades; ++i) {
+                    if (game.move.cascadeCardsInPlay[i].length > 0) {
+                        hasWon = false;
+                    }
+                }
+
+                window.freeCell.dom.toggleDisplayWinMessage(hasWon);
+
+                if (hasWon) {
+                    timer.pause();
+                } else {
+                    timer.resume();
+                }
+            },
             returnToFreeCellGameMove = function Game_returnToFreeCellGameMove(moveIndex) {
                 game.move = game.moves[moveIndex].copy();
 
@@ -168,6 +192,7 @@
                 window.freeCell.dom.setMoveCounter(game.moveIndex);
                 setAutoMoveCardInPlay();
                 toggleButtonsDisabled();
+                checkForWinCriteria();
             },
             commitFreeCellGameMove = function Game_commitFreeCellGameMove() {
                 if (game.moveIndex > -1) {
@@ -180,6 +205,7 @@
                 window.freeCell.dom.setMoveCounter(game.moveIndex);
                 setAutoMoveCardInPlay();
                 toggleButtonsDisabled();
+                checkForWinCriteria();
             },
             isSelectedCardLastInCascade = function Game_isSelectedCardLastInCascade() {
                 return game.selectedCardInPlay

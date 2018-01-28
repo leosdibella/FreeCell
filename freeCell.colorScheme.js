@@ -5,7 +5,7 @@
     var defaultPrimaryRgbColor = new window.freeCell.RgbColor(20, 190, 200);
 
     function ColorScheme(primaryRgbColor,
-                         secondaryRgbColor) {
+        secondaryRgbColor) {
         var colorScheme = this;
 
         colorScheme.primaryRgbColor = window.freeCell.RgbColor.isRgbColor(primaryRgbColor) ? primaryRgbColor : defaultPrimaryRgbColor;

@@ -6,9 +6,9 @@
         defaultNumberOfCascades = 8;
 
     function Configuration(numberOfFreeCells,
-                           numberOfCascades,
-                           deck,
-                           colorScheme) {
+        numberOfCascades,
+        deck,
+        colorScheme) {
         var configuration = this,
             generateCascadeDistribution = function Configuration_generateCascadeDistribution() {
                 var i,

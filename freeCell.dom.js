@@ -63,6 +63,7 @@
             overlay: document.getElementById('overlay'),
             overlayContentBody: document.getElementById('overlay-content-body'),
             overlayContentHeaderCloseButton: document.getElementById('overlay-content-header-close-button'),
+            winMessage: document.getElementById('win-message'),
             overlayTabs: [
                 document.getElementById('overlay-game-settings-button'),
                 document.getElementById('overlay-deck-settings-button'),
@@ -429,6 +430,9 @@
                 clearElementChildren(freeCellElement);
                 removeElementStyles(freeCellElement);
             }
+        },
+        toggleDisplayWinMessage: function dom_toggleDisplayWinMessage(hasWon) {
+            applicationElements.winMessage.style.display = hasWon ? 'block' : 'none';
         }
     };
 

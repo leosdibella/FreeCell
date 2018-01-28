@@ -6,8 +6,8 @@
         maximalColorConstituentValue = hexBase * hexBase;
 
     function RgbColor(red,
-                      green,
-                      blue) {
+        green,
+        blue) {
         var rgbColor = this;
 
         rgbColor.red = window.freeCell.utilities.isNonNegativeInteger(red) ? red : 0;
@@ -50,8 +50,8 @@
         var string = window.freeCell.utilities.isString(hex) && hex.length > 5 ? (hex.length > 6 ? hex.substring(1, 8) : hex) : '000000';
 
         return new RgbColor(Number.parseInt(string.substring(0, 2), hexBase),
-                            Number.parseInt(string.substring(2, 4), hexBase),
-                            Number.parseInt(string.substring(4, 6), hexBase));
+            Number.parseInt(string.substring(2, 4), hexBase),
+            Number.parseInt(string.substring(4, 6), hexBase));
     };
 
     window.freeCell.RgbColor = RgbColor;
