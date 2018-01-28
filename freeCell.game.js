@@ -252,7 +252,8 @@
                     if (game.selectedCardInPlay.freeCellIndex > -1) {
                         bottomMostValidCascadeCardInPlay = game.move.cascadeCardsInPlay[cascadeIndex].length > 0 ? game.move.cascadeCardsInPlay[cascadeIndex][game.move.cascadeCardsInPlay[cascadeIndex].length - 1] : null;
 
-                        if (bottomMostValidCascadeCardInPlay && isValidCascadeChain(bottomMostValidCascadeCardInPlay.card, game.selectedCardInPlay.card)) {
+                        if (!bottomMostValidCascadeCardInPlay
+                                || (bottomMostValidCascadeCardInPlay && isValidCascadeChain(bottomMostValidCascadeCardInPlay.card, game.selectedCardInPlay.card))) {
                             game.move.cascadeCardsInPlay[cascadeIndex].push(game.selectedCardInPlay);
                             game.move.freeCellCardsInPlay[game.selectedCardInPlay.freeCellIndex] = null;
                             commitFreeCellGameMove();
